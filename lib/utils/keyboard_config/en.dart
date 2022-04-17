@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 class KeyboardConfigEn {
   const KeyboardConfigEn();
 
-  static const _keyBaseSize = 50.0;
+  static const _keyBaseSize = 60.0;
   static const _keySpacing = _keyBaseSize  / 10;
 
   final List<List<String>> _regulars = const [

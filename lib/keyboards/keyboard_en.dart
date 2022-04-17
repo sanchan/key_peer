@@ -16,7 +16,7 @@ class KeyboardEn extends StatefulWidget {
 
 class _KeyboardEnState extends State<KeyboardEn> with TickerProviderStateMixin {
   final KeyboardConfigEn _keyboardConfig = const KeyboardConfigEn();
-  Map<String, AnimationController> _animations = {};
+  final Map<String, AnimationController> _animations = {};
 
   @override
   void dispose() {
@@ -58,7 +58,7 @@ class _KeyboardEnState extends State<KeyboardEn> with TickerProviderStateMixin {
     return Column(
       children: _keyboardConfig.regulars.map((row) =>
         Padding(
-          padding: EdgeInsets.symmetric(vertical: _keyboardConfig.keySpacing / 2),
+          padding: EdgeInsets.symmetric(vertical: _keyboardConfig.keySpacing/1.5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: row.map((key) => 
@@ -90,6 +90,69 @@ class KeyRenderer extends StatelessWidget {
     Key? key
   }) : super(key: key);
 
+  String get text {
+    if(regularKey.length == 1) {
+      return regularKey;
+    }
+
+    switch (regularKey) {
+      case '[BACKSPACE]':
+        return 'delete';
+      case '[TAB]':
+        return 'tab';
+      case '[CAPS]':
+        return 'caps lock';
+      case '[RETURN]':
+        return 'return';
+      case '[LEFT_SHIFT]':
+      case '[RIGHT_SHIFT]':
+        return 'shift';
+      case '[LEFT_CMD]':
+      case '[RIGHT_CMD]':
+        return 'command';
+      case '[FN]':
+        return 'fn';
+      case '[LEFT_CONTROL]':
+      case '[RIGHT_CONTROL]':
+        return 'control';
+      case '[SPACE]':
+        return '';
+      case '[LEFT_OPTION]':
+      case '[RIGHT_OPTION]':
+        return 'option';
+      default:
+        return '';
+    }
+  }
+
+  AlignmentGeometry get keyTextAlignment {
+    if(regularKey.length == 1) {
+      return Alignment.center;
+    }
+
+    switch (regularKey) {
+      case '[TAB]':
+      case '[CAPS]':
+      case '[LEFT_SHIFT]':
+      case '[FN]':
+        return Alignment.bottomLeft;
+      case '[BACKSPACE]':
+      case '[RETURN]':
+      case '[RIGHT_SHIFT]':
+        return Alignment.bottomRight;
+      default:
+        return Alignment.bottomCenter;
+    }
+  }
+
+  double get fontSize {
+    if(regularKey.length == 1) {
+      return 16.0;
+    }
+
+    return 13.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -103,6 +166,7 @@ class KeyRenderer extends StatelessWidget {
         return Container(
           height: keyboardConfig.sizeOf(regularKey).height,
           width: keyboardConfig.sizeOf(regularKey).width,
+          padding: const EdgeInsets.all(5.0),
           decoration: BoxDecoration(
             color: color.value,
             border: Border.all(
@@ -110,7 +174,13 @@ class KeyRenderer extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(6.0)
           ),
-          child: Text(regularKey),
+          child: Align(
+            alignment: keyTextAlignment,
+            child: Text(
+              text,
+              style: TextStyle(fontSize: fontSize),
+            ),
+          ),
         );
       },
     );
