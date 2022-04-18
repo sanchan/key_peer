@@ -1,46 +1,105 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
 
 class SettingsDrawer extends StatefulWidget {
   const SettingsDrawer({
     Key? key,
-    required this.focusNode
   }) : super(key: key);
-
-  final FocusNode focusNode;
 
   @override
   State<SettingsDrawer> createState() => _SettingsDrawerState();
 }
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
+  List<LessonConfig> lessons = [
+    const LessonConfig(
+      id: 1,
+      characters: ['e', 't', 'a', 'o']
+    ),
+    const LessonConfig(
+      id: 2,
+      characters: ['n', 'i', 'h', 's', 'r']
+    ),
+    const LessonConfig(
+      id: 3,
+      characters: ['d', 'l', 'u', 'm']
+    ),
+    const LessonConfig(
+      id: 4,
+      characters: ['w', 'c', 'g', 'f']
+    ),
+    const LessonConfig(
+      id: 5,
+      characters: ['y', 'p', 'b', 'v', 'k']
+    ),
+    const LessonConfig(
+      id: 5,
+      characters: ['\'', 'j', 'x', 'q', 'z']
+    ),
+  ];
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: MacosColors.alternatingContentBackgroundColor,
-      padding: const EdgeInsets.all(8.0),
-      width: 300,
+      decoration: const BoxDecoration(
+        color: MacosColors.alternatingContentBackgroundColor,
+      ),
+      padding: const EdgeInsets.symmetric(
+        vertical: 16.0,
+      ),
+      width: 250,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 45,
-            child: Center(child: Text('Settings',))
-          ),
-          const Divider(height: 1.0, color: Color.fromARGB(255, 135, 137, 141)),
-          CupertinoTextField(
-            decoration: const BoxDecoration(
-              color: Colors.transparent,
-              // border: Border.all(width: 1.0, color: const Color.fromARGB(255, 135, 137, 141))
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
             ),
-            focusNode: widget.focusNode,
-            maxLines: 10,
-            onChanged: (text) {
-              print(text);
-            },
+            child: Text(
+              'LESSONS',
+              style: MacosTheme.of(context).typography.body.copyWith(color: Colors.grey[400])
+            ),
           ),
-          const Divider(height: 1.0, color: Color.fromARGB(255, 135, 137, 141)),
-          CupertinoButton.filled(
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 16.0),
+            decoration: BoxDecoration(
+              color: darken(MacosColors.alternatingContentBackgroundColor, 0.02),
+              border: Border(
+                top: BorderSide(width: 1, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
+                bottom: BorderSide(width: 1, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
+              )
+            ),
+            height: 200,
+            child: ListView(
+              children: lessons.asMap().entries.map((lesson) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                  ),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: lesson.key != lessons.length -1
+                        ? BorderSide(width: 0.5, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05))
+                        : BorderSide.none,
+                      top: lesson.key != 0
+                        ? BorderSide(width: 0.5, color: darken(MacosColors.alternatingContentBackgroundColor, 0.05))
+                        : BorderSide.none
+                    )
+                  ),
+                  child: Text(
+                    'Lesson ${lesson.key + 1}: ${lesson.value.characters.join(' ')}'
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const Spacer(),
+          TextButton(
             onPressed: () {
 
             },
@@ -50,4 +109,14 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       ),
     );
   }
+}
+
+class LessonConfig {
+  const LessonConfig({
+    required this.id,
+    required this.characters
+  });
+
+  final int id;
+  final List<String> characters;
 }

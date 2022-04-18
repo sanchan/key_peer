@@ -20,6 +20,7 @@ void main() async {
   await Window.makeTitlebarTransparent();
 
   await DesktopWindow.setMinWindowSize(const Size(1100,450));
+  await DesktopWindow.setWindowSize(const Size(1100,450));
 
   return runApp(const ThemedCupertinoApp());
 }

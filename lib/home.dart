@@ -1,5 +1,4 @@
 
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:key_peer/keyboards/keyboard_en.dart';
 import 'package:key_peer/settings_drawer.dart';
 import 'package:key_peer/typed_text.dart';
 import 'package:key_peer/utils/key_event_controller.dart';
-import 'package:macos_ui/macos_ui.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -29,7 +27,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     _drawerAnimation = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 150)
+      duration: const Duration(milliseconds: 250)
     )..value = 0.0;
   }
 
@@ -57,8 +55,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         if(!isDrawerOpen) {
           _keyEventController.addEvent(event);
         }
-
-        print('isDrawerOpen $isDrawerOpen');
 
         return isDrawerOpen
           ? KeyEventResult.ignored
@@ -92,20 +88,37 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ),
               ),
             ),
+
             AnimatedBuilder(
               animation: _drawerAnimation,
               builder: (_, __) {
-                final offset = Tween<Offset>(
-                  begin: const Offset(0,0),
-                  end: const Offset(300, 0)
-                ).animate(_drawerAnimation);
+                final opacity = Tween<double>(
+                  begin: 1.0,
+                  end: 0.0
+                ).animate(
+                  CurvedAnimation(
+                    parent: _drawerAnimation,
+                    curve: const Interval(0.0, 0.4, curve: Curves.fastOutSlowIn)
+                  )
+                );
 
                 return Positioned(
-                  right: -300 + offset.value.dx,
-                  height: MediaQuery.of(context).size.height,
-                  child: SettingsDrawer(
-                    focusNode: _focusSettingsNode
-                  )
+                  right: 16,
+                  top: 16,
+                  child: GestureDetector(
+                    onTap: _handleToggleDrawer,
+                    behavior: HitTestBehavior.translucent,
+                    child: Opacity(
+                      opacity: opacity.value,
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        child: const Icon(
+                          CupertinoIcons.settings,
+                          color: CupertinoColors.white,
+                        ),
+                      ),
+                    ),
+                  ),
                 );
               }
             ),
@@ -115,28 +128,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               builder: (_, __) {
                 final offset = Tween<Offset>(
                   begin: const Offset(0,0),
-                  end: const Offset(300, 0)
-                ).animate(_drawerAnimation);
-
-                final backgroundOpacity = Tween<double>(
-                  begin: 0,
-                  end: 1
-                ).animate(_drawerAnimation);
+                  end: const Offset(250, 0)
+                ).animate(
+                  CurvedAnimation(
+                    parent: _drawerAnimation,
+                    curve: const Interval(0.4, 1.0, curve: Curves.linear)
+                  )
+                );
 
                 return Positioned(
-                  right: max(16 + offset.value.dx - 60, 16),
-                  top: 16,
-                  child: GestureDetector(
-                    onTap: _handleToggleDrawer,
-                    child: Container(
-                      color: MacosColors.alternatingContentBackgroundColor.withOpacity(backgroundOpacity.value),
-                      padding: const EdgeInsets.all(5),
-                      child: const Icon(
-                        CupertinoIcons.settings,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                  right: -250 + offset.value.dx,
+                  height: MediaQuery.of(context).size.height,
+                  child: const SettingsDrawer()
                 );
               }
             ),
