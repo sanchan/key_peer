@@ -141,7 +141,7 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
             alignment: keyTextAlignment,
             child: Text(
               text,
-              style: TextStyle(fontSize: fontSize),
+              style: TextStyle(fontSize: fontSize, color: Colors.white),
             ),
           ),
         );

@@ -34,6 +34,7 @@ class ThemedCupertinoApp extends StatelessWidget {
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     return const CupertinoApp(
+      debugShowCheckedModeBanner: false,
       theme: CupertinoThemeData(brightness: Brightness.dark),
       home: Home(),
     );
