@@ -15,7 +15,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  final GlobalKey _focusKey = GlobalKey();
   final KeyEventController _keyEventController = KeyEventController();
   late AnimationController _drawerAnimation;
 
@@ -40,8 +39,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Focus(
-      key: _focusKey,
-      onKey: (FocusNode node, RawKeyEvent event) {
+      onKey: (_, RawKeyEvent event) {
         _keyEventController.addEvent(event);
 
         return KeyEventResult.handled;
