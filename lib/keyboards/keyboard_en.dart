@@ -16,7 +16,7 @@ class KeyboardEn extends StatefulWidget {
 }
 
 class _KeyboardEnState extends State<KeyboardEn> with TickerProviderStateMixin {
-  final KeyboardConfigEn _keyboardConfig = const KeyboardConfigEn();
+  final KeyboardConfigEn _keyboardConfig = KeyboardConfigEn();
   final Map<String, AnimationController> _animations = {};
 
   @override
@@ -32,7 +32,7 @@ class _KeyboardEnState extends State<KeyboardEn> with TickerProviderStateMixin {
 
     _eventController.addListener(handleEventChange);
 
-    final List<String> keys = _keyboardConfig.regulars.expand((e) => e).toList();
+    final List<String> keys = _keyboardConfig.keyLabels.expand((e) => e).toList();
     for (var key in keys) {
       _animations[key] = AnimationController(
         vsync: this,
@@ -67,7 +67,7 @@ class _KeyboardEnState extends State<KeyboardEn> with TickerProviderStateMixin {
                 padding: EdgeInsets.symmetric(horizontal: _keyboardConfig.keySpacing),
                 child: KeyRenderer(
                   keyInfo: key,
-                  animation: _animations[key.regular]!,
+                  animation: _animations[key.keyLabel]!,
                 ),
               )
             ).toList(),
@@ -88,7 +88,7 @@ class KeyRenderer extends StatelessWidget {
     Key? key
   }) : super(key: key);
 
-  String get regularKey => keyInfo.regular;
+  String get regularKey => keyInfo.keyLabel;
   Size get keySize => keyInfo.size;
 
   String get text {
@@ -97,29 +97,29 @@ class KeyRenderer extends StatelessWidget {
     }
 
     switch (regularKey) {
-      case '[BACKSPACE]':
+      case 'Backspace':
         return 'delete';
-      case '[TAB]':
+      case 'Tab':
         return 'tab';
-      case '[CAPS]':
+      case 'Caps Lock':
         return 'caps lock';
-      case '[RETURN]':
+      case 'Enter':
         return 'return';
-      case '[LEFT_SHIFT]':
-      case '[RIGHT_SHIFT]':
+      case 'Shift Left':
+      case 'Shift Right':
         return 'shift';
-      case '[LEFT_CMD]':
-      case '[RIGHT_CMD]':
+      case 'Meta Left':
+      case 'Meta Right':
         return 'command';
-      case '[FN]':
-        return 'fn';
-      case '[LEFT_CONTROL]':
+      case 'Fn':
+        return 'Fn';
+      case 'Control Left':
       case '[RIGHT_CONTROL]':
         return 'control';
-      case '[SPACE]':
+      case ' ':
         return '';
-      case '[LEFT_OPTION]':
-      case '[RIGHT_OPTION]':
+      case 'Alt Left':
+      case 'Alt Right':
         return 'option';
       default:
         return '';
@@ -132,14 +132,14 @@ class KeyRenderer extends StatelessWidget {
     }
 
     switch (regularKey) {
-      case '[TAB]':
-      case '[CAPS]':
-      case '[LEFT_SHIFT]':
-      case '[FN]':
+      case 'Tab':
+      case 'Caps Lock':
+      case 'Shift Left':
+      case 'Fn':
         return Alignment.bottomLeft;
-      case '[BACKSPACE]':
-      case '[RETURN]':
-      case '[RIGHT_SHIFT]':
+      case 'Backspace':
+      case 'Enter':
+      case 'Shift Right':
         return Alignment.bottomRight;
       default:
         return Alignment.bottomCenter;

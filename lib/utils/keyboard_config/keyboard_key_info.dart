@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 
 class KeyboardKeyInfo {
   const KeyboardKeyInfo({
-    required this.regular,
+    required this.keyLabel,
     required this.size,
     this.logicalKey,
   });
 
-  final String regular;
+  final String keyLabel;
   final Size size;
   final LogicalKeyboardKey? logicalKey;
 }
