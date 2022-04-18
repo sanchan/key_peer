@@ -22,7 +22,7 @@ class TypedText extends StatefulWidget {
 }
 
 class _TypedTextState extends State<TypedText> {
-  final String _targetText = 'te amo mucho';
+  final String _targetText = 'monkey likes banana.';
   int _cursorIndex = 0;
   List<TypedKeyStatus> _statuses = [];
 

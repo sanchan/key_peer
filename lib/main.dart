@@ -1,8 +1,9 @@
 
 import 'package:desktop_window/desktop_window.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
+import 'package:macos_ui/macos_ui.dart';
 
 import 'package:key_peer/home.dart';
 
@@ -33,10 +34,20 @@ class ThemedCupertinoApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-    return const CupertinoApp(
+
+    return MacosApp(
+      title: 'KeyPeer',
+      theme: MacosThemeData.light(),
+      darkTheme: MacosThemeData.dark(),
+      themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
-      theme: CupertinoThemeData(brightness: Brightness.dark),
-      home: Home(),
+      home: const Home(),
     );
+
+    // return const CupertinoApp(
+    //   debugShowCheckedModeBanner: false,
+    //   theme: CupertinoThemeData(brightness: Brightness.dark),
+    //   home: Home(),
+    // );
   }
 }
