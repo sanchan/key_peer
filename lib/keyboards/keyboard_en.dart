@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:key_peer/utils/key_event_controller.dart';
 import 'package:key_peer/utils/keyboard_config/en.dart';
+import 'package:key_peer/utils/keyboard_config/keyboard_key_info.dart';
 
 class KeyboardEn extends StatefulWidget {
   const KeyboardEn({
@@ -56,7 +57,7 @@ class _KeyboardEnState extends State<KeyboardEn> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
 
     return Column(
-      children: _keyboardConfig.regulars.map((row) =>
+      children: _keyboardConfig.keys.map((row) =>
         Padding(
           padding: EdgeInsets.symmetric(vertical: _keyboardConfig.keySpacing/1.5),
           child: Row(
@@ -65,9 +66,8 @@ class _KeyboardEnState extends State<KeyboardEn> with TickerProviderStateMixin {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: _keyboardConfig.keySpacing),
                 child: KeyRenderer(
-                  animation: _animations[key]!,
-                  keyboardConfig: _keyboardConfig,
-                  regularKey: key,
+                  keyInfo: key,
+                  animation: _animations[key.regular]!,
                 ),
               )
             ).toList(),
@@ -79,16 +79,17 @@ class _KeyboardEnState extends State<KeyboardEn> with TickerProviderStateMixin {
 }
 
 class KeyRenderer extends StatelessWidget {
+  final KeyboardKeyInfo keyInfo;
   final Animation<double> animation;
-  final KeyboardConfigEn keyboardConfig;
-  final String regularKey;
 
   const KeyRenderer({
+    required this.keyInfo,
     required this.animation,
-    required this.keyboardConfig,
-    required this.regularKey,
     Key? key
   }) : super(key: key);
+
+  String get regularKey => keyInfo.regular;
+  Size get keySize => keyInfo.size;
 
   String get text {
     if(regularKey.length == 1) {
@@ -164,8 +165,8 @@ class KeyRenderer extends StatelessWidget {
         ).animate(animation);
 
         return Container(
-          height: keyboardConfig.sizeOf(regularKey).height,
-          width: keyboardConfig.sizeOf(regularKey).width,
+          height: keySize.height,
+          width: keySize.width,
           padding: const EdgeInsets.all(5.0),
           decoration: BoxDecoration(
             color: color.value,

@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:key_peer/utils/keyboard_config/keyboard_config.dart';
+import 'package:key_peer/utils/keyboard_config/keyboard_key_info.dart';
 
-class KeyboardConfigEn {
-  const KeyboardConfigEn();
+class KeyboardConfigEn extends KeyboardConfig {
+  const KeyboardConfigEn() : super();
 
   static const _keyBaseSize = 60.0;
   static const _keySpacing = _keyBaseSize  / 10;
-
-  final List<List<String>> _regulars = const [
-    ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '[BACKSPACE]'],
-    ['[TAB]', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
-    ['[CAPS]', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '[RETURN]'],
-    ['[LEFT_SHIFT]', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '[RIGHT_SHIFT]'],
-    ['[FN]', '[LEFT_CONTROL]', '[LEFT_OPTION]', '[LEFT_CMD]', '[SPACE]', '[RIGHT_CMD]', '[RIGHT_OPTION]', '[___]']
-  ];
 
   final Map<String, double> _customWidth = const {
     '[BACKSPACE]': 1.5,
@@ -42,14 +36,44 @@ class KeyboardConfigEn {
     '[RIGHT_CMD]': LogicalKeyboardKey.metaRight,
   };
 
+  static const List<List<String>> _regulars = [
+    ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '[BACKSPACE]'],
+    ['[TAB]', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
+    ['[CAPS]', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '[RETURN]'],
+    ['[LEFT_SHIFT]', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '[RIGHT_SHIFT]'],
+    ['[FN]', '[LEFT_CONTROL]', '[LEFT_OPTION]', '[LEFT_CMD]', '[SPACE]', '[RIGHT_CMD]', '[RIGHT_OPTION]', '[___]']
+  ];
+
+
+  static List<List<KeyboardKeyInfo>>? _keys;
+
+  @override
   double get keySpacing => _keySpacing;
 
-  List<List<String>> get regulars => _regulars;
-
+  @override
   LogicalKeyboardKey? logicalOf(String regular) {
     return _regularToLogical[regular];
   }
 
+  @override
+  List<List<String>> get regulars => _regulars;
+
+  @override
+  List<List<KeyboardKeyInfo>> get keys {
+    _keys ??= _regulars.map((row) =>
+      row.map((key) =>
+        KeyboardKeyInfo(
+          regular: key,
+          logicalKey: logicalOf(key),
+          size: sizeOf(key),
+        )
+      ).toList()
+    ).toList();
+
+    return _keys!;
+  }
+
+  @override
   Size sizeOf(String key) {
     return Size(
       (_customWidth[key] ?? 1) * _keyBaseSize,
