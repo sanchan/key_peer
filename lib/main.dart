@@ -1,3 +1,5 @@
+
+import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
@@ -6,17 +8,18 @@ import 'package:key_peer/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Window.initialize();
   await Window.setEffect(
     effect: WindowEffect.acrylic,
     // color: const Color(0xCC222222),
-    color: Color.fromARGB(0, 255, 0, 0),
+    color: const Color.fromARGB(0, 255, 0, 0),
     dark: true
   );
-  await Window.setEffect(
-    effect: WindowEffect.transparent,
-  );
   await Window.makeTitlebarTransparent();
+
+  await DesktopWindow.setMinWindowSize(const Size(1100,450));
+
   return runApp(const ThemedCupertinoApp());
 }
 

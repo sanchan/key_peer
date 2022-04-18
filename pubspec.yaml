@@ -37,6 +37,7 @@ dependencies:
   after_layout: ^1.1.0
   shared_preferences: ^2.0.13
   flutter_acrylic: ^1.0.0
+  desktop_window: ^0.4.0
 
 dev_dependencies:
   flutter_test:

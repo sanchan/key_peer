@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:key_peer/utils/keyboard_config/keyboard_config.dart';
 
 class KeyboardConfigEn extends KeyboardConfig {
@@ -10,18 +9,6 @@ class KeyboardConfigEn extends KeyboardConfig {
       ['Shift Left', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'Shift Right'],
       ['Fn', 'Control Left', 'Alt Left', 'Meta Left', ' ', 'Meta Right', 'Alt Right', '[___]']
     ],
-    logicals: const {
-      'Backspace': LogicalKeyboardKey.backspace,
-      'Tab': LogicalKeyboardKey.tab,
-      'Caps Lock': LogicalKeyboardKey.capsLock,
-      'Enter': LogicalKeyboardKey.enter,
-      'Shift Left': LogicalKeyboardKey.shiftLeft,
-      'Shift Right': LogicalKeyboardKey.shiftRight,
-
-      'Meta Left': LogicalKeyboardKey.metaLeft,
-      ' ': LogicalKeyboardKey.space,
-      'Meta Right': LogicalKeyboardKey.metaRight,
-    },
     customWidths: const {
       'Backspace': 1.5,
       'Tab': 1.5,

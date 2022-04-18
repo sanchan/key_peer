@@ -11,7 +11,6 @@ class KeyEventController extends ChangeNotifier {
 
   void addEvent(RawKeyEvent event) {
     this.event = event;
-    print(event.logicalKey.keyLabel);
 
     if(event.character != null) {
       _lastChar = event.character;
