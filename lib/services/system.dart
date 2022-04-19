@@ -41,7 +41,8 @@ class SystemService {
     }
   }
 
-  void generateTargetText() {
+  static void generateTargetText() {
     targetText.value = 'anana';
+    statuses.value = targetText.value.characters.map((char) => TypedKeyStatus.none).toList();
   }
 }

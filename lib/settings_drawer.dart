@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:key_peer/services/system.dart';
 import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
 
@@ -101,7 +102,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
           const Spacer(),
           TextButton(
             onPressed: () {
-
+              SystemService.generateTargetText();
             },
             child: const Text('Save'),
           )
