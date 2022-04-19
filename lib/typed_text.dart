@@ -21,9 +21,12 @@ class TypedText extends StatefulWidget {
 
 class _TypedTextState extends State<TypedText> {
   int _cursorIndex = 0;
-  List<TypedKeyStatus> _statuses = [];
 
   String get targetText => SystemService.targetText.value;
+  List<TypedKeyStatus> get statuses => SystemService.statuses.value;
+  bool get isLessonCompleted => SystemService.isLessonCompleted;
+
+  set statuses(List<TypedKeyStatus> newStatuses) => SystemService.statuses.value = newStatuses;
 
   @override
   void dispose() {
@@ -36,37 +39,56 @@ class _TypedTextState extends State<TypedText> {
   void initState() {
     super.initState();
 
-    _statuses = targetText.characters.map((char) => TypedKeyStatus.NONE).toList();
+    statuses = targetText.characters.map((char) => TypedKeyStatus.NONE).toList();
 
     SystemService.keyEventController.addListener(handleEventChange);
   }
 
   void handleEventChange() {
+    if(isLessonCompleted) {
+      return;
+    }
+
     final event = SystemService.keyEventController.event;
 
     if(event is RawKeyUpEvent || event?.character == null) {
       return;
     }
 
-    if(event?.logicalKey == LogicalKeyboardKey.backspace) {
-      setState(() {
-        if(_cursorIndex > 0) {
-          _cursorIndex--;
-        }
-      });
-      return;
+    if(
+      event?.logicalKey == LogicalKeyboardKey.backspace ||
+      event?.logicalKey == LogicalKeyboardKey.arrowLeft
+    ) {
+      return moveCursorLeft();
+    } else if(event?.logicalKey == LogicalKeyboardKey.arrowRight) {
+      return moveCursorRight();
     }
 
     if(event?.logicalKey.keyLabel.toLowerCase() == targetText[_cursorIndex]) {
-      if(_statuses[_cursorIndex] == TypedKeyStatus.NONE || _statuses[_cursorIndex] == TypedKeyStatus.CORRECT) {
-        _statuses[_cursorIndex] = TypedKeyStatus.CORRECT;
+      if(
+        statuses[_cursorIndex] == TypedKeyStatus.NONE ||
+        statuses[_cursorIndex] == TypedKeyStatus.CORRECT
+      ) {
+        statuses[_cursorIndex] = TypedKeyStatus.CORRECT;
       } else {
-        _statuses[_cursorIndex] = TypedKeyStatus.CORRECTED;
+        statuses[_cursorIndex] = TypedKeyStatus.CORRECTED;
       }
     } else {
-      _statuses[_cursorIndex] = TypedKeyStatus.ERROR;
+      statuses[_cursorIndex] = TypedKeyStatus.ERROR;
     }
 
+    moveCursorRight();
+  }
+
+  void moveCursorLeft() {
+    setState(() {
+      if(_cursorIndex > 0) {
+        _cursorIndex--;
+      }
+    });
+  }
+
+  void moveCursorRight() {
     setState(() {
       if(_cursorIndex < targetText.length - 1) {
         _cursorIndex++;
@@ -82,24 +104,24 @@ class _TypedTextState extends State<TypedText> {
       final char = targetText[i];
         richCharacters.add(
           TextSpan(
-            text: char == ' ' && (_statuses[i] == TypedKeyStatus.ERROR || _statuses[i] == TypedKeyStatus.CORRECTED)
+            text: char == ' ' && (statuses[i] == TypedKeyStatus.ERROR || statuses[i] == TypedKeyStatus.CORRECTED)
               ? '•'
               : char,
             style: TextStyle(
-              backgroundColor: _cursorIndex == i
+              backgroundColor: _cursorIndex == i && !isLessonCompleted
                 ? Colors.grey[300]
                 : null,
-              color: _statuses[i] == TypedKeyStatus.NONE
+              color: statuses[i] == TypedKeyStatus.NONE
                 ? _cursorIndex == i
                   ? Colors.black
                   : Colors.grey
-                : _statuses[i] == TypedKeyStatus.CORRECT
-                  ? _cursorIndex == i
+                : statuses[i] == TypedKeyStatus.CORRECT
+                  ? _cursorIndex == i && !isLessonCompleted
                     ? Colors.black
                     : Colors.white
-                  : _statuses[i] == TypedKeyStatus.ERROR
+                  : statuses[i] == TypedKeyStatus.ERROR
                     ? Colors.red
-                    : _statuses[i] == TypedKeyStatus.CORRECTED
+                    : statuses[i] == TypedKeyStatus.CORRECTED
                       ? Colors.blue
                       : Colors.blue
             )
