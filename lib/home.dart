@@ -1,5 +1,9 @@
 
 
+
+import 'dart:math';
+
+import 'package:confetti/confetti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:key_peer/keyboards/keyboard_en.dart';
@@ -143,6 +147,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 );
               }
             ),
+
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: SystemService.confettiController,
+                blastDirection: pi / 2,
+                blastDirectionality: BlastDirectionality.explosive,
+                minBlastForce: 50,
+                maxBlastForce: 100,
+                emissionFrequency: 0.01,
+                numberOfParticles: 50,
+                gravity: 0.7,
+              ),
+            )
           ],
         ),
       )

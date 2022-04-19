@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:key_peer/typed_text.dart';
 import 'package:key_peer/utils/key_event_controller.dart';
 import 'package:key_peer/utils/keyboard_config/keyboard_config.dart';
+import 'package:confetti/confetti.dart';
+
 
 class SystemService {
   static KeyEventController keyEventController = KeyEventController();
   static KeyboardConfig keyboardConfig = KeyboardConfig.forLang(lang: 'en');
   static ValueNotifier<String> targetText = ValueNotifier('monkey');
   static ValueNotifier<List<TypedKeyStatus>> statuses = ValueNotifier([]);
+  static ConfettiController confettiController = ConfettiController(duration: const Duration(milliseconds: 1500));
 
   static bool get isLessonCompleted {
     return statuses.value.every((status) =>

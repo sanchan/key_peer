@@ -14,19 +14,12 @@ class TypedText extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-
   @override
   State<TypedText> createState() => _TypedTextState();
 }
 
 class _TypedTextState extends State<TypedText> {
   int _cursorIndex = 0;
-
-  String get targetText => SystemService.targetText.value;
-  List<TypedKeyStatus> get statuses => SystemService.statuses.value;
-  bool get isLessonCompleted => SystemService.isLessonCompleted;
-
-  set statuses(List<TypedKeyStatus> newStatuses) => SystemService.statuses.value = newStatuses;
 
   @override
   void dispose() {
@@ -43,6 +36,10 @@ class _TypedTextState extends State<TypedText> {
 
     SystemService.keyEventController.addListener(handleEventChange);
   }
+
+  bool get isLessonCompleted => SystemService.isLessonCompleted;
+  List<TypedKeyStatus> get statuses => SystemService.statuses.value;
+  String get targetText => SystemService.targetText.value;
 
   void handleEventChange() {
     if(isLessonCompleted) {
@@ -78,6 +75,10 @@ class _TypedTextState extends State<TypedText> {
     }
 
     moveCursorRight();
+
+    if(isLessonCompleted) {
+      SystemService.confettiController.play();
+    }
   }
 
   void moveCursorLeft() {
@@ -95,6 +96,8 @@ class _TypedTextState extends State<TypedText> {
       }
     });
   }
+
+  set statuses(List<TypedKeyStatus> newStatuses) => SystemService.statuses.value = newStatuses;
 
   @override
   Widget build(BuildContext context) {
