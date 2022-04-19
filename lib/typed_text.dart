@@ -20,9 +20,10 @@ class TypedText extends StatefulWidget {
 }
 
 class _TypedTextState extends State<TypedText> {
-  final String _targetText = 'monkey likes banana.';
   int _cursorIndex = 0;
   List<TypedKeyStatus> _statuses = [];
+
+  String get targetText => SystemService.targetText.value;
 
   @override
   void dispose() {
@@ -35,7 +36,7 @@ class _TypedTextState extends State<TypedText> {
   void initState() {
     super.initState();
 
-    _statuses = _targetText.characters.map((char) => TypedKeyStatus.NONE).toList();
+    _statuses = targetText.characters.map((char) => TypedKeyStatus.NONE).toList();
 
     SystemService.keyEventController.addListener(handleEventChange);
   }
@@ -56,7 +57,7 @@ class _TypedTextState extends State<TypedText> {
       return;
     }
 
-    if(event?.logicalKey.keyLabel.toLowerCase() == _targetText[_cursorIndex]) {
+    if(event?.logicalKey.keyLabel.toLowerCase() == targetText[_cursorIndex]) {
       if(_statuses[_cursorIndex] == TypedKeyStatus.NONE || _statuses[_cursorIndex] == TypedKeyStatus.CORRECT) {
         _statuses[_cursorIndex] = TypedKeyStatus.CORRECT;
       } else {
@@ -67,7 +68,7 @@ class _TypedTextState extends State<TypedText> {
     }
 
     setState(() {
-      if(_cursorIndex < _targetText.length - 1) {
+      if(_cursorIndex < targetText.length - 1) {
         _cursorIndex++;
       }
     });
@@ -77,11 +78,11 @@ class _TypedTextState extends State<TypedText> {
   Widget build(BuildContext context) {
     List<TextSpan> richCharacters = [];
 
-    for (var i = 0; i < _targetText.length; i++) {
-      final char = _targetText[i];
+    for (var i = 0; i < targetText.length; i++) {
+      final char = targetText[i];
         richCharacters.add(
           TextSpan(
-            text: char == ' ' && _statuses[i] != TypedKeyStatus.NONE
+            text: char == ' ' && (_statuses[i] == TypedKeyStatus.ERROR || _statuses[i] == TypedKeyStatus.CORRECTED)
               ? '•'
               : char,
             style: TextStyle(
