@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:key_peer/services/system.dart';
 
 enum TypedKeyStatus {
-  NONE,
-  CORRECT,
-  ERROR,
-  CORRECTED,
+  none,
+  correct,
+  error,
+  corrected,
 }
 
 class TypedText extends StatefulWidget {
@@ -32,7 +32,7 @@ class _TypedTextState extends State<TypedText> {
   void initState() {
     super.initState();
 
-    statuses = targetText.characters.map((char) => TypedKeyStatus.NONE).toList();
+    statuses = targetText.characters.map((char) => TypedKeyStatus.none).toList();
 
     SystemService.keyEventController.addListener(handleEventChange);
   }
@@ -63,15 +63,15 @@ class _TypedTextState extends State<TypedText> {
 
     if(event?.logicalKey.keyLabel.toLowerCase() == targetText[_cursorIndex]) {
       if(
-        statuses[_cursorIndex] == TypedKeyStatus.NONE ||
-        statuses[_cursorIndex] == TypedKeyStatus.CORRECT
+        statuses[_cursorIndex] == TypedKeyStatus.none ||
+        statuses[_cursorIndex] == TypedKeyStatus.correct
       ) {
-        statuses[_cursorIndex] = TypedKeyStatus.CORRECT;
+        statuses[_cursorIndex] = TypedKeyStatus.correct;
       } else {
-        statuses[_cursorIndex] = TypedKeyStatus.CORRECTED;
+        statuses[_cursorIndex] = TypedKeyStatus.corrected;
       }
     } else {
-      statuses[_cursorIndex] = TypedKeyStatus.ERROR;
+      statuses[_cursorIndex] = TypedKeyStatus.error;
     }
 
     moveCursorRight();
@@ -107,24 +107,24 @@ class _TypedTextState extends State<TypedText> {
       final char = targetText[i];
         richCharacters.add(
           TextSpan(
-            text: char == ' ' && (statuses[i] == TypedKeyStatus.ERROR || statuses[i] == TypedKeyStatus.CORRECTED)
+            text: char == ' ' && (statuses[i] == TypedKeyStatus.error || statuses[i] == TypedKeyStatus.corrected)
               ? '•'
               : char,
             style: TextStyle(
               backgroundColor: _cursorIndex == i && !isLessonCompleted
                 ? Colors.grey[300]
                 : null,
-              color: statuses[i] == TypedKeyStatus.NONE
+              color: statuses[i] == TypedKeyStatus.none
                 ? _cursorIndex == i
                   ? Colors.black
                   : Colors.grey
-                : statuses[i] == TypedKeyStatus.CORRECT
+                : statuses[i] == TypedKeyStatus.correct
                   ? _cursorIndex == i && !isLessonCompleted
                     ? Colors.black
                     : Colors.white
-                  : statuses[i] == TypedKeyStatus.ERROR
+                  : statuses[i] == TypedKeyStatus.error
                     ? Colors.red
-                    : statuses[i] == TypedKeyStatus.CORRECTED
+                    : statuses[i] == TypedKeyStatus.corrected
                       ? Colors.blue
                       : Colors.blue
             )

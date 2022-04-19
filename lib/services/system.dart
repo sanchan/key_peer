@@ -7,20 +7,27 @@ import 'package:confetti/confetti.dart';
 
 class SystemService {
   static KeyEventController keyEventController = KeyEventController();
-  static KeyboardConfig keyboardConfig = KeyboardConfig.forLang(lang: 'en');
+  static ConfettiController confettiController = ConfettiController(duration: const Duration(milliseconds: 1500));
+
+  static ValueNotifier<KeyboardConfig> keyboardConfig = ValueNotifier(KeyboardConfig.forLang(lang: 'en'));
   static ValueNotifier<String> targetText = ValueNotifier('monkey');
   static ValueNotifier<List<TypedKeyStatus>> statuses = ValueNotifier([]);
-  static ConfettiController confettiController = ConfettiController(duration: const Duration(milliseconds: 1500));
+
+  static Stopwatch lessonClock = Stopwatch();
 
   static bool get isLessonCompleted {
     return statuses.value.every((status) =>
-      status == TypedKeyStatus.CORRECT ||
-      status == TypedKeyStatus.CORRECTED
+      status == TypedKeyStatus.correct ||
+      status == TypedKeyStatus.corrected
     );
+  }
+
+  static void startLesson() {
+    lessonClock.start();
   }
 
   /// When the user completes a lesson, we call this method which will register the completion.
   static void completeLesson() {
-
+    lessonClock.stop();
   }
 }
