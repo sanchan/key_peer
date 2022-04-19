@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:key_peer/services/system.dart';
+import 'package:key_peer/utils/key_event_controller.dart';
 
 enum TypedKeyStatus {
   none,
@@ -25,7 +26,7 @@ class _TypedTextState extends State<TypedText> {
   void dispose() {
     super.dispose();
 
-    SystemService.keyEventController.removeListener(handleEventChange);
+    keyEventController.removeListener(handleEventChange);
   }
 
   @override
@@ -34,19 +35,20 @@ class _TypedTextState extends State<TypedText> {
 
     statuses = targetText.characters.map((char) => TypedKeyStatus.none).toList();
 
-    SystemService.keyEventController.addListener(handleEventChange);
+    keyEventController.addListener(handleEventChange);
   }
 
   bool get isLessonCompleted => SystemService.isLessonCompleted;
   List<TypedKeyStatus> get statuses => SystemService.statuses.value;
   String get targetText => SystemService.targetText.value;
+  KeyEventController get keyEventController => SystemService.keyEventController;
 
   void handleEventChange() {
     if(isLessonCompleted) {
       return;
     }
 
-    final event = SystemService.keyEventController.event;
+    final event = keyEventController.event;
 
     if(event is RawKeyUpEvent || event?.character == null) {
       return;
