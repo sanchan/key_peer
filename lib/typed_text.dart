@@ -68,19 +68,15 @@ class _TypedTextState extends State<TypedText> {
         statuses[_cursorIndex] == TypedKeyStatus.none ||
         statuses[_cursorIndex] == TypedKeyStatus.correct
       ) {
-        statuses[_cursorIndex] = TypedKeyStatus.correct;
+        SystemService.updateStatus(_cursorIndex, TypedKeyStatus.correct);
       } else {
-        statuses[_cursorIndex] = TypedKeyStatus.corrected;
+        SystemService.updateStatus(_cursorIndex, TypedKeyStatus.corrected);
       }
     } else {
-      statuses[_cursorIndex] = TypedKeyStatus.error;
+      SystemService.updateStatus(_cursorIndex, TypedKeyStatus.error);
     }
 
     moveCursorRight();
-
-    if(isLessonCompleted) {
-      SystemService.confettiController.play();
-    }
   }
 
   void moveCursorLeft() {

@@ -30,4 +30,14 @@ class SystemService {
   static void completeLesson() {
     lessonClock.stop();
   }
+
+  static void updateStatus(int index, TypedKeyStatus status) {
+    if(index < statuses.value.length) {
+      statuses.value[index] = status;
+    }
+
+    if(isLessonCompleted) {
+      SystemService.confettiController.play();
+    }
+  }
 }
