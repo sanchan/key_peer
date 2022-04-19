@@ -1,32 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:key_peer/keyboards/key_renderer.dart';
-import 'package:key_peer/utils/key_event_controller.dart';
-import 'package:key_peer/utils/keyboard_config/en.dart';
+import 'package:key_peer/services/system.dart';
 
 class KeyboardEn extends StatelessWidget {
   const KeyboardEn({
     Key? key,
-    required this.keyEventController,
   }) : super(key: key);
 
-  static final KeyboardConfigEn _keyboardConfig = KeyboardConfigEn();
-  final KeyEventController keyEventController;
+
 
   @override
   Widget build(BuildContext context) {
 
     return Column(
-      children: _keyboardConfig.keys.map((row) =>
+      children: SystemService.keyboardConfig.keys.map((row) =>
         Padding(
-          padding: EdgeInsets.symmetric(vertical: _keyboardConfig.keySpacing/1.5),
+          padding: EdgeInsets.symmetric(vertical: SystemService.keyboardConfig.keySpacing/1.5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: row.map((key) =>
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: _keyboardConfig.keySpacing),
+                padding: EdgeInsets.symmetric(horizontal: SystemService.keyboardConfig.keySpacing),
                 child: KeyRenderer(
                   keyInfo: key,
-                  eventController: keyEventController,
+                  eventController: SystemService.keyEventController,
                 ),
               )
             ).toList(),

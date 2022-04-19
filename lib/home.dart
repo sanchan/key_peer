@@ -4,9 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:key_peer/keyboards/keyboard_en.dart';
 import 'package:key_peer/scoreboard.dart';
+import 'package:key_peer/services/system.dart';
 import 'package:key_peer/settings_drawer.dart';
 import 'package:key_peer/typed_text.dart';
-import 'package:key_peer/utils/key_event_controller.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -18,7 +18,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   final FocusNode _focusMainNode = FocusNode();
   final FocusNode _focusSettingsNode = FocusNode();
-  final KeyEventController _keyEventController = KeyEventController();
   late AnimationController _drawerAnimation;
   bool isDrawerOpen = false;
 
@@ -54,7 +53,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       focusNode: _focusMainNode,
       onKey: (_, RawKeyEvent event) {
         if(!isDrawerOpen) {
-          _keyEventController.addEvent(event);
+          SystemService.keyEventController.addEvent(event);
         }
 
         return isDrawerOpen
@@ -70,19 +69,19 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             GestureDetector(
               onTap: _handleCloseDrawer,
               child: AnimatedBuilder(
-                animation: _keyEventController,
+                animation: SystemService.keyEventController,
                 builder: (BuildContext context, Widget? child) {
                   return Container(
                     color: Colors.transparent,
                     child: Column(
-                      children: [
-                        const SizedBox(height: 60.0),
-                        const Scoreboard(),
-                        const Spacer(),
-                        TypedText(keyEventController: _keyEventController),
-                        const Spacer(),
-                        KeyboardEn(keyEventController: _keyEventController),
-                        const SizedBox(height: 60.0),
+                      children: const [
+                        SizedBox(height: 60.0),
+                        Scoreboard(),
+                        Spacer(),
+                        TypedText(),
+                        Spacer(),
+                        KeyboardEn(),
+                        SizedBox(height: 60.0),
                       ],
                     ),
                   );

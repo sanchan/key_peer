@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:key_peer/utils/key_event_controller.dart';
+import 'package:key_peer/services/system.dart';
 
 enum TypedKeyStatus {
   NONE,
@@ -12,10 +12,8 @@ enum TypedKeyStatus {
 class TypedText extends StatefulWidget {
   const TypedText({
     Key? key,
-    required this.keyEventController,
   }) : super(key: key);
 
-  final KeyEventController keyEventController;
 
   @override
   State<TypedText> createState() => _TypedTextState();
@@ -30,7 +28,7 @@ class _TypedTextState extends State<TypedText> {
   void dispose() {
     super.dispose();
 
-    widget.keyEventController.removeListener(handleEventChange);
+    SystemService.keyEventController.removeListener(handleEventChange);
   }
 
   @override
@@ -39,11 +37,11 @@ class _TypedTextState extends State<TypedText> {
 
     _statuses = _targetText.characters.map((char) => TypedKeyStatus.NONE).toList();
 
-    widget.keyEventController.addListener(handleEventChange);
+    SystemService.keyEventController.addListener(handleEventChange);
   }
 
   void handleEventChange() {
-    final event = widget.keyEventController.event;
+    final event = SystemService.keyEventController.event;
 
     if(event is RawKeyUpEvent || event?.character == null) {
       return;
@@ -83,7 +81,7 @@ class _TypedTextState extends State<TypedText> {
       final char = _targetText[i];
         richCharacters.add(
           TextSpan(
-            text: char == ' ' && _statuses[i] == TypedKeyStatus.ERROR
+            text: char == ' ' && _statuses[i] != TypedKeyStatus.NONE
               ? '•'
               : char,
             style: TextStyle(
