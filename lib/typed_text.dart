@@ -83,7 +83,9 @@ class _TypedTextState extends State<TypedText> {
       final char = _targetText[i];
         richCharacters.add(
           TextSpan(
-            text: char,
+            text: char == ' ' && _statuses[i] == TypedKeyStatus.ERROR
+              ? '•'
+              : char,
             style: TextStyle(
               backgroundColor: _cursorIndex == i
                 ? Colors.grey[300]
