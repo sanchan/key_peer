@@ -26,7 +26,8 @@ class _TypedTextState extends State<TypedText> {
   void dispose() {
     super.dispose();
 
-    keyEventController.removeListener(handleEventChange);
+    keyEventController.removeListener(_handleEventChange);
+    SystemService.targetText.removeListener(_handleTargetTextChange);
   }
 
   @override
@@ -35,15 +36,18 @@ class _TypedTextState extends State<TypedText> {
 
     statuses = targetText.characters.map((char) => TypedKeyStatus.none).toList();
 
-    keyEventController.addListener(handleEventChange);
+    keyEventController.addListener(_handleEventChange);
+    SystemService.targetText.addListener(_handleTargetTextChange);
   }
 
   bool get isLessonCompleted => SystemService.isLessonCompleted;
+  KeyEventController get keyEventController => SystemService.keyEventController;
   List<TypedKeyStatus> get statuses => SystemService.statuses.value;
   String get targetText => SystemService.targetText.value;
-  KeyEventController get keyEventController => SystemService.keyEventController;
 
-  void handleEventChange() {
+  set statuses(List<TypedKeyStatus> newStatuses) => SystemService.statuses.value = newStatuses;
+
+  void _handleEventChange() {
     if(isLessonCompleted) {
       return;
     }
@@ -58,9 +62,9 @@ class _TypedTextState extends State<TypedText> {
       event?.logicalKey == LogicalKeyboardKey.backspace ||
       event?.logicalKey == LogicalKeyboardKey.arrowLeft
     ) {
-      return moveCursorLeft();
+      return _moveCursorLeft();
     } else if(event?.logicalKey == LogicalKeyboardKey.arrowRight) {
-      return moveCursorRight();
+      return _moveCursorRight();
     }
 
     if(event?.logicalKey.keyLabel.toLowerCase() == targetText[_cursorIndex]) {
@@ -76,10 +80,16 @@ class _TypedTextState extends State<TypedText> {
       SystemService.updateStatus(_cursorIndex, TypedKeyStatus.error);
     }
 
-    moveCursorRight();
+    _moveCursorRight();
   }
 
-  void moveCursorLeft() {
+  void _handleTargetTextChange() {
+    setState(() {
+      _cursorIndex = 0;
+    });
+  }
+
+  void _moveCursorLeft() {
     setState(() {
       if(_cursorIndex > 0) {
         _cursorIndex--;
@@ -87,15 +97,13 @@ class _TypedTextState extends State<TypedText> {
     });
   }
 
-  void moveCursorRight() {
+  void _moveCursorRight() {
     setState(() {
       if(_cursorIndex < targetText.length - 1) {
         _cursorIndex++;
       }
     });
   }
-
-  set statuses(List<TypedKeyStatus> newStatuses) => SystemService.statuses.value = newStatuses;
 
   @override
   Widget build(BuildContext context) {

@@ -40,4 +40,8 @@ class SystemService {
       SystemService.confettiController.play();
     }
   }
+
+  void generateTargetText() {
+    targetText.value = 'anana';
+  }
 }
