@@ -109,7 +109,7 @@ class _TypedTextState extends State<TypedText> {
     return RichText(
       text: TextSpan(
         children: richCharacters,
-        style: const TextStyle(fontSize: 24)
+        style: const TextStyle(fontFamily: 'Courier New', fontSize: 24)
       )
     );
   }

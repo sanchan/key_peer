@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:key_peer/keyboards/keyboard_en.dart';
+import 'package:key_peer/scoreboard.dart';
 import 'package:key_peer/settings_drawer.dart';
 import 'package:key_peer/typed_text.dart';
 import 'package:key_peer/utils/key_event_controller.dart';
@@ -68,24 +69,24 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           children: [
             GestureDetector(
               onTap: _handleCloseDrawer,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: AnimatedBuilder(
-                  animation: _keyEventController,
-                  builder: (BuildContext context, Widget? child) {
-                    return Container(
-                      color: Colors.transparent,
-                      child: Column(
-                        children: [
-                          TypedText(keyEventController: _keyEventController),
-                          const SizedBox(height: 16.0),
-                          const Spacer(),
-                          KeyboardEn(keyEventController: _keyEventController),
-                        ],
-                      ),
-                    );
-                  }
-                ),
+              child: AnimatedBuilder(
+                animation: _keyEventController,
+                builder: (BuildContext context, Widget? child) {
+                  return Container(
+                    color: Colors.transparent,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 60.0),
+                        const Scoreboard(),
+                        const Spacer(),
+                        TypedText(keyEventController: _keyEventController),
+                        const Spacer(),
+                        KeyboardEn(keyEventController: _keyEventController),
+                        const SizedBox(height: 60.0),
+                      ],
+                    ),
+                  );
+                }
               ),
             ),
 

@@ -12,15 +12,15 @@ void main() async {
 
   await Window.initialize();
   await Window.setEffect(
-    effect: WindowEffect.acrylic,
+    effect: WindowEffect.mica,
     // color: const Color(0xCC222222),
-    color: const Color.fromARGB(0, 255, 0, 0),
+    // color: const Color.fromARGB(200, 120, 0, 0),
     dark: true
   );
   await Window.makeTitlebarTransparent();
 
-  await DesktopWindow.setMinWindowSize(const Size(1100,450));
-  await DesktopWindow.setWindowSize(const Size(1100,450));
+  await DesktopWindow.setMinWindowSize(const Size(1100,630));
+  await DesktopWindow.setWindowSize(const Size(1100,630));
 
   return runApp(const ThemedCupertinoApp());
 }
@@ -38,17 +38,11 @@ class ThemedCupertinoApp extends StatelessWidget {
 
     return MacosApp(
       title: 'KeyPeer',
-      theme: MacosThemeData.light(),
+      theme: MacosThemeData.dark(),
       darkTheme: MacosThemeData.dark(),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       home: const Home(),
     );
-
-    // return const CupertinoApp(
-    //   debugShowCheckedModeBanner: false,
-    //   theme: CupertinoThemeData(brightness: Brightness.dark),
-    //   home: Home(),
-    // );
   }
 }
