@@ -13,7 +13,7 @@ class SettingsDrawer extends StatefulWidget {
 }
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
-  List<LessonConfig> lessons = [
+  final List<LessonConfig> _lessons = [
     const LessonConfig(
       id: 1,
       characters: ['e', 't', 'a', 'o']
@@ -40,6 +40,9 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     ),
   ];
 
+  void _changeLesson(LessonConfig lessonConfig) {
+    SystemService.generateTargetText(lessonConfig.characters);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,38 +77,34 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
             ),
             height: 200,
             child: ListView(
-              children: lessons.asMap().entries.map((lesson) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
-                  ),
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: lesson.key != lessons.length -1
-                        ? BorderSide(width: 0.5, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05))
-                        : BorderSide.none,
-                      top: lesson.key != 0
-                        ? BorderSide(width: 0.5, color: darken(MacosColors.alternatingContentBackgroundColor, 0.05))
-                        : BorderSide.none
-                    )
-                  ),
-                  child: Text(
-                    'Lesson ${lesson.key + 1}: ${lesson.value.characters.join(' ')}'
+              children: _lessons.asMap().entries.map((lesson) {
+                return GestureDetector(
+                  onTap: () => _changeLesson(lesson.value),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                    ),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: lesson.key != _lessons.length -1
+                          ? BorderSide(width: 0.5, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05))
+                          : BorderSide.none,
+                        top: lesson.key != 0
+                          ? BorderSide(width: 0.5, color: darken(MacosColors.alternatingContentBackgroundColor, 0.05))
+                          : BorderSide.none
+                      )
+                    ),
+                    child: Text(
+                      'Lesson ${lesson.key + 1}: ${lesson.value.characters.join(' ')}'
+                    ),
                   ),
                 );
               }).toList(),
             ),
           ),
-          const Spacer(),
-          TextButton(
-            onPressed: () {
-              SystemService.generateTargetText();
-            },
-            child: const Text('Save'),
-          )
         ],
       ),
     );
@@ -118,6 +117,6 @@ class LessonConfig {
     required this.characters
   });
 
-  final int id;
   final List<String> characters;
+  final int id;
 }

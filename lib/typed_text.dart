@@ -138,11 +138,15 @@ class _TypedTextState extends State<TypedText> {
         );
     }
 
-    return RichText(
-      text: TextSpan(
-        children: richCharacters,
-        style: const TextStyle(fontFamily: 'Courier New', fontSize: 24)
-      )
+    return SizedBox(
+      width: 1040.0,
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          children: richCharacters,
+          style: const TextStyle(fontFamily: 'Courier New', fontSize: 24)
+        )
+      ),
     );
   }
 }

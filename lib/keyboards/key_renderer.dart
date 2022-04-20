@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:key_peer/services/system.dart';
 import 'package:key_peer/utils/key_event_controller.dart';
 import 'package:key_peer/utils/keyboard_config/keyboard_key_info.dart';
 
 class KeyRenderer extends StatefulWidget {
   const KeyRenderer({
     required this.keyInfo,
-    required this.eventController,
     Key? key
   }) : super(key: key);
 
-  final KeyEventController eventController;
   final KeyboardKeyInfo keyInfo;
 
   @override
@@ -20,18 +19,20 @@ class KeyRenderer extends StatefulWidget {
 class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
+  KeyEventController get _eventController => SystemService.keyEventController;
+
   @override
   void dispose() {
     super.dispose();
 
-    widget.eventController.removeListener(handleEventChange);
+    _eventController.removeListener(handleEventChange);
   }
 
   @override
   void initState() {
     super.initState();
 
-    widget.eventController.addListener(handleEventChange);
+    _eventController.addListener(handleEventChange);
 
     _animationController = AnimationController(
       vsync: this,
@@ -104,7 +105,7 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
   }
 
   void handleEventChange() {
-    final event = widget.eventController.event;
+    final event = _eventController.event;
 
     if(event?.logicalKey == logicalKey) {
       if(event is RawKeyDownEvent) {

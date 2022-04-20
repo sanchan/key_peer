@@ -24,7 +24,6 @@ class KeyboardEn extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: keyboardConfig.keySpacing),
                     child: KeyRenderer(
                       keyInfo: key,
-                      eventController: SystemService.keyEventController,
                     ),
                   )
                 ).toList(),
