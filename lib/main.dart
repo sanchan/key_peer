@@ -27,6 +27,7 @@ void main() async {
     await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
     await windowManager.setSize(const Size(1100,630));
     await windowManager.setMinimumSize(const Size(1100,630));
+    await windowManager.setFullScreen(false); // Workaround
     await windowManager.center();
     await windowManager.show();
     await windowManager.setSkipTaskbar(false);

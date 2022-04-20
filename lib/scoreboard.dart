@@ -56,7 +56,14 @@ class ScoreboardItem extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           decoration: BoxDecoration(
             color: lighten(MacosColors.alternatingContentBackgroundColor, 0.2),
-            borderRadius: BorderRadius.circular(100)
+            borderRadius: BorderRadius.circular(100),
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 1.0,
+                color: darken(MacosColors.alternatingContentBackgroundColor, 0.1),
+                offset: const Offset(0, 1.0)
+              )
+            ]
           ),
           child: MacosIcon(
             icon,

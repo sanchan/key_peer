@@ -52,21 +52,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
     setState(() {
       _isFullscreen = true;
     });
-
-    // await Window.setEffect(
-    //   effect: WindowEffect.disabled,
-    // );
   }
 
   @override
   void onWindowLeaveFullScreen() async {
-    // await Window.setEffect(
-    //   effect: WindowEffect.mica,
-    //   // color: const Color(0xCC222222),
-    //   // color: const Color.fromARGB(200, 120, 0, 0),
-    //   dark: true
-    // );
-
     setState(() {
       _isFullscreen = false;
     });
@@ -104,9 +93,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
       autofocus: true,
       child: CupertinoPageScaffold(
         backgroundColor: _isFullscreen
-          ? CupertinoColors.darkBackgroundGray
-          // ? CupertinoColors.secondarySystemBackground
-          // ? CupertinoColors.tertiarySystemBackground
+          ? CupertinoColors.secondarySystemBackground
           : Colors.transparent,
         child: Stack(
           fit: StackFit.expand,
