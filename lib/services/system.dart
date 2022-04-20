@@ -49,30 +49,42 @@ class SystemService {
     }
   }
 
-  static void generateTargetText(List<String> characters) {
-    targetText.value = _textGenerator.generateText(characters.join().characters);
+  static void generateTargetText() {
+    targetText.value = _textGenerator.generateText(settings.value);
     statuses.value = targetText.value.characters.map((char) => TypedKeyStatus.none).toList();
   }
 }
 
 class TextGenerator {
-  final int _maxTextLenght = 70;
+  final int _maxWordLenght = 5;
 
-  String _generateWord(Characters characters, int maxLenght) {
+  String _generateWord(List<String> characters, String ignore) {
     Random random = Random();
+    List<String> filteredCharacters = characters.where((char) => char != ignore).toList();
+
+    print('ignore $ignore');
 
     return List.generate(
-      random.nextInt(maxLenght) + 1,
-      (_) => characters.elementAt(random.nextInt(characters.length))
+      random.nextInt(_maxWordLenght) + 1,
+      (_) => filteredCharacters[random.nextInt(filteredCharacters.length)]
     ).join();
   }
 
-  String generateText(Characters characters) {
+  String generateText(Settings settings) {
     String text = '';
-    while(text.length < _maxTextLenght) {
-      text += _generateWord(characters, 5) + ' ';
+
+    // print('>>> ${!settings.repeatLetter}');
+
+    while(text.length < settings.textLength) {
+      text += _generateWord(
+        settings.currentLesson?.characters ?? 'monkey'.split(''),
+        !settings.repeatLetter && text.isNotEmpty
+          ? text[text.length - 2]
+          : ''
+      ) + ' ';
     }
 
-    return text.substring(0, _maxTextLenght).trim();
+
+    return text.substring(0, settings.textLength).trim();
   }
 }

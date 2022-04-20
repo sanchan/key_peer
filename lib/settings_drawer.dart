@@ -44,12 +44,17 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     ),
   ];
 
+  void _generateTargetText() {
+    SystemService.generateTargetText();
+  }
+
   void _handleChangeLesson(LessonConfig lessonConfig) {
     Settings settings = SystemService.settings.value.clone()
       ..currentLesson = lessonConfig;
+
     SystemService.settings.value = settings;
 
-    SystemService.generateTargetText(lessonConfig.characters);
+    _generateTargetText();
   }
 
   void _handleChangeTextLength(int length) {
@@ -57,6 +62,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       ..textLength = length;
 
     SystemService.settings.value = settings;
+
+    _generateTargetText();
   }
 
   void _handleChangeCapitalLetters(bool value) {
@@ -64,6 +71,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       ..useCapitalLetters = value;
 
     SystemService.settings.value = settings;
+
+    _generateTargetText();
   }
 
   void _handleChangeNumbers(bool value) {
@@ -71,6 +80,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       ..useNumbers = value;
 
     SystemService.settings.value = settings;
+
+    _generateTargetText();
   }
 
   void _handleChangePunctuation(bool value) {
@@ -78,6 +89,17 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       ..usePunctuation = value;
 
     SystemService.settings.value = settings;
+
+    _generateTargetText();
+  }
+
+  void _handleChangeRepeatLetters(bool value) {
+    Settings settings = SystemService.settings.value.clone()
+      ..repeatLetter = value;
+
+    SystemService.settings.value = settings;
+
+    _generateTargetText();
   }
 
   @override
@@ -127,29 +149,6 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                     _SettingsBlockItem(
                       isFirst: true,
                       isLast: false,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Text length'),
-                          MacosPopupButton<int>(
-                            value: settings.textLength,
-                            onChanged: (int? newValue) {
-                              _handleChangeTextLength(newValue!);
-                            },
-                            items: <int>[100, 75, 50, 25]
-                              .map<MacosPopupMenuItem<int>>((int value) {
-                                return MacosPopupMenuItem<int>(
-                                  value: value,
-                                  child: Text('$value'),
-                                );
-                              }).toList(),
-                          )
-                        ],
-                      ),
-                    ),
-                    _SettingsBlockItem(
-                      isFirst: false,
-                      isLast: false,
                       child: _SettingsSwitchItem(
                         label: 'Capital letters',
                         value: settings.useCapitalLetters,
@@ -167,11 +166,43 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                     ),
                     _SettingsBlockItem(
                       isFirst: false,
-                      isLast: true,
+                      isLast: false,
                       child: _SettingsSwitchItem(
                         label: 'Punctuation',
                         value: settings.usePunctuation,
                         onChanged: _handleChangePunctuation,
+                      ),
+                    ),
+                    _SettingsBlockItem(
+                      isFirst: false,
+                      isLast: false,
+                      child: _SettingsSwitchItem(
+                        label: 'Repeat letters',
+                        value: settings.repeatLetter,
+                        onChanged: _handleChangeRepeatLetters,
+                      ),
+                    ),
+                    _SettingsBlockItem(
+                      isFirst: false,
+                      isLast: true,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Text length'),
+                          MacosPopupButton<int>(
+                            value: settings.textLength,
+                            onChanged: (int? newValue) {
+                              _handleChangeTextLength(newValue!);
+                            },
+                            items: <int>[70, 40, 25]
+                              .map<MacosPopupMenuItem<int>>((int value) {
+                                return MacosPopupMenuItem<int>(
+                                  value: value,
+                                  child: Text('$value'),
+                                );
+                              }).toList(),
+                          )
+                        ],
                       ),
                     ),
                   ]
