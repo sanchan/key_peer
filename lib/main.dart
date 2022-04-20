@@ -1,5 +1,5 @@
 
-import 'package:desktop_window/desktop_window.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
@@ -19,8 +19,18 @@ void main() async {
   );
   await Window.makeTitlebarTransparent();
 
-  await DesktopWindow.setMinWindowSize(const Size(1100,630));
-  await DesktopWindow.setWindowSize(const Size(1100,630));
+  await windowManager.ensureInitialized();
+
+  // Use it only after calling `hiddenWindowAtLaunch`
+  windowManager.waitUntilReadyToShow().then((_) async{
+    // Hide window title bar
+    await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+    await windowManager.setSize(const Size(1100,630));
+    await windowManager.setMinimumSize(const Size(1100,630));
+    await windowManager.center();
+    await windowManager.show();
+    await windowManager.setSkipTaskbar(false);
+  });
 
   return runApp(const ThemedCupertinoApp());
 }
