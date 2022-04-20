@@ -1,6 +1,7 @@
 
 
 
+
 import 'dart:math';
 
 import 'package:confetti/confetti.dart';
@@ -11,6 +12,7 @@ import 'package:key_peer/scoreboard.dart';
 import 'package:key_peer/services/system.dart';
 import 'package:key_peer/settings_drawer.dart';
 import 'package:key_peer/typed_text.dart';
+import 'package:window_manager/window_manager.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -19,15 +21,18 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin, WindowListener {
   final FocusNode _focusMainNode = FocusNode();
   final FocusNode _focusSettingsNode = FocusNode();
   late AnimationController _drawerAnimation;
-  bool isDrawerOpen = false;
+  bool _isDrawerOpen = false;
+  bool _isFullscreen = false;
 
   @override
   void initState() {
     super.initState();
+
+    windowManager.addListener(this);
 
     _drawerAnimation = AnimationController(
       vsync: this,
@@ -35,11 +40,43 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     )..value = 0.0;
   }
 
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+
+    super.dispose();
+  }
+
+  @override
+  void onWindowEnterFullScreen() async {
+    setState(() {
+      _isFullscreen = true;
+    });
+
+    // await Window.setEffect(
+    //   effect: WindowEffect.disabled,
+    // );
+  }
+
+  @override
+  void onWindowLeaveFullScreen() async {
+    // await Window.setEffect(
+    //   effect: WindowEffect.mica,
+    //   // color: const Color(0xCC222222),
+    //   // color: const Color.fromARGB(200, 120, 0, 0),
+    //   dark: true
+    // );
+
+    setState(() {
+      _isFullscreen = false;
+    });
+  }
+
   void _handleToggleDrawer() {
     if(_drawerAnimation.isCompleted) {
       _handleCloseDrawer();
     } else {
-      isDrawerOpen = true;
+      _isDrawerOpen = true;
       FocusScope.of(context).requestFocus(_focusSettingsNode);
       _drawerAnimation.forward();
     }
@@ -47,7 +84,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   void _handleCloseDrawer() {
     _drawerAnimation.reverse();
-    isDrawerOpen = false;
+    _isDrawerOpen = false;
     FocusScope.of(context).requestFocus(_focusMainNode);
   }
 
@@ -56,17 +93,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return Focus(
       focusNode: _focusMainNode,
       onKey: (_, RawKeyEvent event) {
-        if(!isDrawerOpen) {
+        if(!_isDrawerOpen) {
           SystemService.keyEventController.addEvent(event);
         }
 
-        return isDrawerOpen
+        return _isDrawerOpen
           ? KeyEventResult.ignored
           : KeyEventResult.handled;
       },
       autofocus: true,
       child: CupertinoPageScaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: _isFullscreen
+          ? CupertinoColors.darkBackgroundGray
+          // ? CupertinoColors.secondarySystemBackground
+          // ? CupertinoColors.tertiarySystemBackground
+          : Colors.transparent,
         child: Stack(
           fit: StackFit.expand,
           children: [

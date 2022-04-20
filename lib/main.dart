@@ -43,8 +43,8 @@ class ThemedCupertinoApp extends StatelessWidget {
     // This app is designed only to work vertically, so we limit
     // orientations to portrait up and down.
     SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]
+    );
 
     return MacosApp(
       title: 'KeyPeer',
