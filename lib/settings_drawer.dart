@@ -47,8 +47,11 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: MacosColors.alternatingContentBackgroundColor,
+        border: Border(
+          left: BorderSide(width: 1, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
+        )
       ),
       padding: const EdgeInsets.symmetric(
         vertical: 16.0,
