@@ -52,9 +52,30 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     SystemService.generateTargetText(lessonConfig.characters);
   }
 
+  void _handleChangeTextLength(int length) {
+    Settings settings = SystemService.settings.value.clone()
+      ..textLength = length;
+
+    SystemService.settings.value = settings;
+  }
+
   void _handleChangeCapitalLetters(bool value) {
     Settings settings = SystemService.settings.value.clone()
       ..useCapitalLetters = value;
+
+    SystemService.settings.value = settings;
+  }
+
+  void _handleChangeNumbers(bool value) {
+    Settings settings = SystemService.settings.value.clone()
+      ..useNumbers = value;
+
+    SystemService.settings.value = settings;
+  }
+
+  void _handleChangePunctuation(bool value) {
+    Settings settings = SystemService.settings.value.clone()
+      ..usePunctuation = value;
 
     SystemService.settings.value = settings;
   }
@@ -72,50 +93,93 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
         vertical: 16.0,
       ),
       width: 250,
-      child: ValueListenableBuilder(
-        valueListenable: SystemService.settings,
-        builder: (_, Settings settings, __) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const _SettingsBlockTitle(title: 'Lessons'),
-              _SettingsBlock(
-                children: _lessons.asMap().entries.map((lesson) {
-                  return GestureDetector(
-                    onTap: () => _handleChangeLesson(lesson.value),
-                    child: _SettingsBlockItem(
-                      isFirst: lesson.key == 0,
-                      isLast: lesson.key == _lessons.length - 1,
+      child: SingleChildScrollView(
+        child: ValueListenableBuilder(
+          valueListenable: SystemService.settings,
+          builder: (_, Settings settings, __) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const _SettingsBlockTitle(title: 'Lessons'),
+                _SettingsBlock(
+                  children: _lessons.asMap().entries.map((lesson) {
+                    return GestureDetector(
+                      onTap: () => _handleChangeLesson(lesson.value),
+                      child: _SettingsBlockItem(
+                        isFirst: lesson.key == 0,
+                        isLast: lesson.key == _lessons.length - 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Lesson ${lesson.key + 1}: ${lesson.value.characters.join(' ')}'),
+                            if(settings.currentLesson?.id == lesson.value.id)
+                            const MacosIcon(CupertinoIcons.check_mark, size: 16,)
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+
+                const _SettingsBlockTitle(title: 'Text modifiers'),
+                _SettingsBlock(
+                  children: [
+                    _SettingsBlockItem(
+                      isFirst: true,
+                      isLast: false,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Lesson ${lesson.key + 1}: ${lesson.value.characters.join(' ')}'),
-                          if(settings.currentLesson?.id == lesson.value.id)
-                          const MacosIcon(CupertinoIcons.check_mark, size: 16,)
+                          const Text('Text length'),
+                          MacosPopupButton<int>(
+                            value: settings.textLength,
+                            onChanged: (int? newValue) {
+                              _handleChangeTextLength(newValue!);
+                            },
+                            items: <int>[100, 75, 50, 25]
+                              .map<MacosPopupMenuItem<int>>((int value) {
+                                return MacosPopupMenuItem<int>(
+                                  value: value,
+                                  child: Text('$value'),
+                                );
+                              }).toList(),
+                          )
                         ],
                       ),
                     ),
-                  );
-                }).toList(),
-              ),
-
-              const _SettingsBlockTitle(title: 'Text modifiers'),
-              _SettingsBlock(
-                children: [
-                  _SettingsBlockItem(
-                    isFirst: true,
-                    isLast: false,
-                    child: _SettingsSwitchItem(
-                      label: 'Capital letters',
-                      value: settings.useCapitalLetters,
-                      onChanged: _handleChangeCapitalLetters,
+                    _SettingsBlockItem(
+                      isFirst: false,
+                      isLast: false,
+                      child: _SettingsSwitchItem(
+                        label: 'Capital letters',
+                        value: settings.useCapitalLetters,
+                        onChanged: _handleChangeCapitalLetters,
+                      ),
                     ),
-                  )
-                ]
-              )
-            ],
-          );
-        },
+                    _SettingsBlockItem(
+                      isFirst: false,
+                      isLast: false,
+                      child: _SettingsSwitchItem(
+                        label: 'Numbers',
+                        value: settings.useNumbers,
+                        onChanged: _handleChangeNumbers,
+                      ),
+                    ),
+                    _SettingsBlockItem(
+                      isFirst: false,
+                      isLast: true,
+                      child: _SettingsSwitchItem(
+                        label: 'Punctuation',
+                        value: settings.usePunctuation,
+                        onChanged: _handleChangePunctuation,
+                      ),
+                    ),
+                  ]
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
