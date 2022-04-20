@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:key_peer/services/lesson_config.dart';
+import 'package:key_peer/services/settings.dart';
 import 'package:key_peer/services/system.dart';
 import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
@@ -15,7 +16,6 @@ class SettingsDrawer extends StatefulWidget {
 }
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
-  ValueNotifier<LessonConfig?> get _currentLesson => SystemService.currentLesson;
 
   final List<LessonConfig> _lessons = [
     const LessonConfig(
@@ -44,9 +44,19 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     ),
   ];
 
-  void _changeLesson(LessonConfig lessonConfig) {
-    SystemService.currentLesson.value = lessonConfig;
+  void _handleChangeLesson(LessonConfig lessonConfig) {
+    Settings settings = SystemService.settings.value.clone()
+      ..currentLesson = lessonConfig;
+    SystemService.settings.value = settings;
+
     SystemService.generateTargetText(lessonConfig.characters);
+  }
+
+  void _handleChangeCapitalLetters(bool value) {
+    Settings settings = SystemService.settings.value.clone()
+      ..useCapitalLetters = value;
+
+    SystemService.settings.value = settings;
   }
 
   @override
@@ -62,17 +72,17 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
         vertical: 16.0,
       ),
       width: 250,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const _SettingsBlockTitle(title: 'Lessons'),
-          ValueListenableBuilder(
-            valueListenable: _currentLesson,
-            builder: (_, LessonConfig? currentLesson, __) {
-              return _SettingsBlock(
+      child: ValueListenableBuilder(
+        valueListenable: SystemService.settings,
+        builder: (_, Settings settings, __) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _SettingsBlockTitle(title: 'Lessons'),
+              _SettingsBlock(
                 children: _lessons.asMap().entries.map((lesson) {
                   return GestureDetector(
-                    onTap: () => _changeLesson(lesson.value),
+                    onTap: () => _handleChangeLesson(lesson.value),
                     child: _SettingsBlockItem(
                       isFirst: lesson.key == 0,
                       isLast: lesson.key == _lessons.length - 1,
@@ -80,31 +90,32 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Lesson ${lesson.key + 1}: ${lesson.value.characters.join(' ')}'),
-                          if(currentLesson?.id == lesson.value.id)
+                          if(settings.currentLesson?.id == lesson.value.id)
                           const MacosIcon(CupertinoIcons.check_mark, size: 16,)
                         ],
                       ),
                     ),
                   );
                 }).toList(),
-              );
-            },
-          ),
+              ),
 
-          const _SettingsBlockTitle(title: 'Text modifiers'),
-          _SettingsBlock(
-            children: [
-              _SettingsBlockItem(
-                isFirst: true,
-                isLast: false,
-                child: _SettingsCheckboxItem(
-                  label: 'Capital letters',
-                  notifier: SystemService.useCapitalLetters,
-                ),
+              const _SettingsBlockTitle(title: 'Text modifiers'),
+              _SettingsBlock(
+                children: [
+                  _SettingsBlockItem(
+                    isFirst: true,
+                    isLast: false,
+                    child: _SettingsSwitchItem(
+                      label: 'Capital letters',
+                      value: settings.useCapitalLetters,
+                      onChanged: _handleChangeCapitalLetters,
+                    ),
+                  )
+                ]
               )
-            ]
-          )
-        ],
+            ],
+          );
+        },
       ),
     );
   }
@@ -195,34 +206,29 @@ class _SettingsBlockItem extends StatelessWidget {
   }
 }
 
-class _SettingsCheckboxItem extends StatelessWidget {
-  const _SettingsCheckboxItem({
+class _SettingsSwitchItem extends StatelessWidget {
+  const _SettingsSwitchItem({
     Key? key,
     required this.label,
-    required this.notifier,
+    required this.value,
+    required this.onChanged,
   }) : super(key: key);
 
   final String label;
-  final ValueNotifier<bool> notifier;
+  final bool value;
+  final Function(bool) onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: notifier,
-      builder: (_, bool value, __) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label),
-            MacosSwitch(
-              value: value,
-              onChanged: (_) {
-                notifier.value = !value;
-              }
-            )
-          ],
-        );
-      },
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label),
+        MacosSwitch(
+          value: value,
+          onChanged: onChanged
+        )
+      ],
     );
   }
 }

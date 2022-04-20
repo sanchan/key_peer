@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:key_peer/services/lesson_config.dart';
+import 'package:key_peer/services/settings.dart';
 import 'package:key_peer/typed_text.dart';
 import 'package:key_peer/utils/key_event_controller.dart';
 import 'package:key_peer/utils/keyboard_config/keyboard_config.dart';
@@ -16,13 +16,8 @@ class SystemService {
   static final ValueNotifier<String> targetText = ValueNotifier('monkey');
   static final ValueNotifier<List<TypedKeyStatus>> statuses = ValueNotifier([]);
 
-  // Lesson
-  static final ValueNotifier<LessonConfig?> currentLesson = ValueNotifier(null);
-
   // Settings
-  static final ValueNotifier<bool> useCapitalLetters = ValueNotifier(false);
-  static final ValueNotifier<bool> useNumbers = ValueNotifier(false);
-  static final ValueNotifier<bool> usePunctuation = ValueNotifier(false);
+  static final ValueNotifier<Settings> settings = ValueNotifier(Settings());
 
   static final Stopwatch lessonClock = Stopwatch();
 
