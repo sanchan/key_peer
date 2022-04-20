@@ -58,16 +58,22 @@ class SystemService {
 class TextGenerator {
   final int _maxWordLenght = 5;
 
-  String _generateWord(List<String> characters, String ignore) {
+  String _generateWord(List<String> characters, bool ignore) {
     Random random = Random();
-    List<String> filteredCharacters = characters.where((char) => char != ignore).toList();
 
-    print('ignore $ignore');
+    int wordLength = random.nextInt(_maxWordLenght) + 1;
 
-    return List.generate(
-      random.nextInt(_maxWordLenght) + 1,
-      (_) => filteredCharacters[random.nextInt(filteredCharacters.length)]
-    ).join();
+    String word = '';
+    while(word.length < wordLength) {
+      String ignoreChar = ignore && word.isNotEmpty
+        ? word[word.length - 1]
+        : '';
+
+      List<String> filteredCharacters = characters.where((char) => char != ignoreChar).toList();
+      word += filteredCharacters[random.nextInt(filteredCharacters.length)];
+    }
+
+    return word;
   }
 
   String generateText(Settings settings) {
@@ -78,9 +84,7 @@ class TextGenerator {
     while(text.length < settings.textLength) {
       text += _generateWord(
         settings.currentLesson?.characters ?? 'monkey'.split(''),
-        !settings.repeatLetter && text.isNotEmpty
-          ? text[text.length - 2]
-          : ''
+        !settings.repeatLetter
       ) + ' ';
     }
 
