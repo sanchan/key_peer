@@ -55,7 +55,13 @@ class KeyboardConfig {
 
   final double keyBaseSize;
 
-  List<List<KeyboardKeyInfo>>? _keys;
+  final List<List<KeyboardKeyInfo>> get keysInfo {
+
+  }
+
+  final List<List<KeyboardKeyInfo>> get altKeysInfo {
+
+  }
 
   double get keySpacing => keyBaseSize  / 10;
   // List<List<KeyboardKeyInfo>> keys;
