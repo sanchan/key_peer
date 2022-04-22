@@ -59,6 +59,7 @@ class TextGenerator {
   final int _maxWordLenght = 5;
   final int _capitalsPercentage = 20;
   final int _numbersPercentage = 15;
+  final int _punctuationPercentage = 30;
 
   String _generateWord(List<String> characters, bool ignore) {
     Random random = Random();
@@ -102,8 +103,17 @@ class TextGenerator {
     if(settings.useCapitalLetters) {
       text = text.trim().split(' ').map((word) =>
         random.nextInt(100) < _capitalsPercentage
-          ? word
-          : word[0].toUpperCase() + word.substring(1)
+          ? word[0].toUpperCase() + word.substring(1)
+          : word
+      ).join(' ') + ' ';
+    }
+
+    // Add punctuation simbols
+    if(settings.usePunctuation) {
+      text = text.trim().split(' ').map((word) =>
+        random.nextInt(100) < _punctuationPercentage
+          ? '$word${(['.', ',', ';', ':'].toList()..shuffle()).first}'
+          : word
       ).join(' ') + ' ';
     }
 

@@ -65,8 +65,6 @@ class _TypedTextState extends State<TypedText> {
       return _moveCursorRight();
     }
 
-    print('>>> ${event?.logicalKey.debugName}');
-
     if(event?.logicalKey.keyLabel.toLowerCase() == _targetText[_cursorIndex]) {
       if(
         _statuses[_cursorIndex] == TypedKeyStatus.none ||

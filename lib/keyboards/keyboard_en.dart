@@ -14,7 +14,7 @@ class KeyboardEn extends StatelessWidget {
       valueListenable: SystemService.keyboardConfig,
       builder: (_, KeyboardConfig keyboardConfig, __) =>
         Column(
-          children: keyboardConfig.keys.map((row) =>
+          children: keyboardConfig.keysInfo.map((row) =>
             Padding(
               padding: EdgeInsets.symmetric(vertical: keyboardConfig.keySpacing/1.5),
               child: Row(

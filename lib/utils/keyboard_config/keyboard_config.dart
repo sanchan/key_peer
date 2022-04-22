@@ -8,14 +8,28 @@ typedef K = LogicalKeyboardKey;
 
 class KeyboardConfig {
   KeyboardConfig({
-    required this.keys,
-    required this.altKeys,
-    required this.customWidths,
-    this.keyBaseSize = 60.0
-  });
+    required List<List<LogicalKeyboardKey>> keys,
+    required List<List<LogicalKeyboardKey>> altKeys,
+    required Map<LogicalKeyboardKey, double> customWidths,
+    this.baseKeySize = 60.0
+  }) {
+    keysInfo = [];
+    for (var i = 0; i < keys.length; i++) {
+      keysInfo.add([]);
+      final row = keys[i];
+      for (var j = 0; j < row.length; j++) {
+        keysInfo[i].add(
+          KeyboardKeyInfo(
+            key: keys[i][j],
+            altKey: altKeys[i][j],
+            size: _sizeOf(keys[i][j], customWidths)
+          )
+        );
+      }
+    }
+  }
 
   factory KeyboardConfig.forLang({String lang = 'en'}) {
-
     return KeyboardConfig(
       keys: [
         [K.backquote, K.digit1, K.digit2, K.digit3, K.digit4, K.digit5, K.digit6, K.digit7, K.digit8, K.digit9, K.digit0, K.minus, K.equal, K.backspace],
@@ -49,29 +63,15 @@ class KeyboardConfig {
     );
   }
 
-  final List<List<LogicalKeyboardKey>> keys;
-  final List<List<LogicalKeyboardKey>> altKeys;
-  final Map<LogicalKeyboardKey, double> customWidths;
+  final double baseKeySize;
+  late final List<List<KeyboardKeyInfo>> keysInfo;
 
-  final double keyBaseSize;
+  double get keySpacing => baseKeySize  / 10;
 
-  final List<List<KeyboardKeyInfo>> get keysInfo {
-
-  }
-
-  final List<List<KeyboardKeyInfo>> get altKeysInfo {
-
-  }
-
-  double get keySpacing => keyBaseSize  / 10;
-  // List<List<KeyboardKeyInfo>> keys;
-  // List<List<KeyboardKeyInfo>> altKeys;
-
-
-  Size sizeOf(String keyLabel) {
+  Size _sizeOf(LogicalKeyboardKey key, Map<LogicalKeyboardKey, double> customWidths) {
     return Size(
-      (customWidths[keyLabel] ?? 1) * keyBaseSize,
-      keyBaseSize
+      (customWidths[key] ?? 1) * baseKeySize,
+      baseKeySize
     );
   }
 }

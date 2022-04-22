@@ -19,20 +19,18 @@ class KeyRenderer extends StatefulWidget {
 class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
-  KeyEventController get _eventController => SystemService.keyEventController;
-
   @override
   void dispose() {
     super.dispose();
 
-    _eventController.removeListener(handleEventChange);
+    _eventController.removeListener(_handleEventChange);
   }
 
   @override
   void initState() {
     super.initState();
 
-    _eventController.addListener(handleEventChange);
+    _eventController.addListener(_handleEventChange);
 
     _animationController = AnimationController(
       vsync: this,
@@ -40,24 +38,15 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
     )..value = 1.0;
   }
 
-  LogicalKeyboardKey get logicalKey => widget.keyInfo.logicalKey;
-  String get keyLabel => logicalKey.keyLabel;
-
-  double get fontSize {
-    if(keyLabel.length == 1) {
-      return 16.0;
-    }
-
-    return 13.0;
-  }
-
-  Size get keySize => widget.keyInfo.size;
-  AlignmentGeometry get keyTextAlignment {
-    if(keyLabel.length == 1) {
+  KeyEventController get _eventController => SystemService.keyEventController;
+  String get _keyLabel => _logicalKey.keyLabel;
+  Size get _keySize => widget.keyInfo.size;
+  AlignmentGeometry get _keyTextAlignment {
+    if(_keyLabel.length == 1) {
       return Alignment.center;
     }
 
-    switch (keyLabel) {
+    switch (_keyLabel) {
       case 'Tab':
       case 'Caps Lock':
       case 'Shift Left':
@@ -72,9 +61,9 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
     }
   }
 
-  String get text {
-
-    switch (logicalKey.keyLabel) {
+  LogicalKeyboardKey get _logicalKey => widget.keyInfo.key;
+  String get _text {
+    switch (_logicalKey.keyLabel) {
       case 'Backspace':
         return 'delete';
       case 'Tab':
@@ -100,14 +89,22 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
       case 'Alt Right':
         return 'option';
       default:
-        return logicalKey.keyLabel.toLowerCase();
+        return _logicalKey.keyLabel.toLowerCase();
     }
   }
 
-  void handleEventChange() {
+  double get fontSize {
+    if(_keyLabel.length == 1) {
+      return 16.0;
+    }
+
+    return 13.0;
+  }
+
+  void _handleEventChange() {
     final event = _eventController.event;
 
-    if(event?.logicalKey == logicalKey) {
+    if(event?.logicalKey == _logicalKey) {
       if(event is RawKeyDownEvent) {
         _animationController.reset();
       } else if (event is RawKeyUpEvent) {
@@ -128,8 +125,8 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
         ).animate(_animationController);
 
         return Container(
-          height: keySize.height,
-          width: keySize.width,
+          height: _keySize.height,
+          width: _keySize.width,
           padding: const EdgeInsets.all(5.0),
           decoration: BoxDecoration(
             color: color.value,
@@ -139,9 +136,9 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
             borderRadius: BorderRadius.circular(6.0)
           ),
           child: Align(
-            alignment: keyTextAlignment,
+            alignment: _keyTextAlignment,
             child: Text(
-              text,
+              _text,
               style: TextStyle(fontSize: fontSize, color: Colors.white),
             ),
           ),
