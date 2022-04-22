@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:key_peer/utils/keyboard_config/keyboard_key_info.dart';
 
+typedef K = LogicalKeyboardKey;
+
 class KeyboardConfig {
   KeyboardConfig({
-    required this.keyLabels,
+    required this.keys,
+    required this.altKeys,
     required this.customWidths,
     this.keyBaseSize = 60.0
   });
@@ -14,124 +17,50 @@ class KeyboardConfig {
   factory KeyboardConfig.forLang({String lang = 'en'}) {
 
     return KeyboardConfig(
-      keyLabels: const [
-        ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
-        ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
-        ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter'],
-        ['Shift Left', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'Shift Right'],
-        ['Fn', 'Control Left', 'Alt Left', 'Meta Left', ' ', 'Meta Right', 'Alt Right', '[___]']
+      keys: [
+        [K.backquote, K.digit1, K.digit2, K.digit3, K.digit4, K.digit5, K.digit6, K.digit7, K.digit8, K.digit9, K.digit0, K.minus, K.equal, K.backspace],
+        [K.tab, K.keyQ, K.keyW, K.keyE, K.keyR, K.keyT, K.keyY, K.keyU, K.keyI, K.keyO, K.keyP, K.bracketLeft, K.bracketRight, K.backslash],
+        [K.capsLock, K.keyA, K.keyS, K.keyD, K.keyF, K.keyG, K.keyH, K.keyJ, K.keyK, K.keyL, K.semicolon, K.quoteSingle, K.enter],
+        [K.shiftLeft, K.keyZ, K.keyX, K.keyC, K.keyV, K.keyB, K.keyN, K.keyM, K.comma, K.period, K.slash, K.shiftRight],
+        [K.fn, K.controlLeft, K.altLeft, K.metaLeft, K.space, K.metaRight, K.altRight, K.escape]
       ],
-      customWidths: const {
-        'Backspace': 1.5,
-        'Tab': 1.5,
-        'Caps Lock': 1.84,
-        'Enter': 1.84,
-        'Shift Left': 2.4,
-        'Shift Right': 2.4,
 
-        'Meta Left': 1.25,
-        ' ': 6.15,
-        'Meta Right': 1.25,
-        '[___]': 3,
+      altKeys: [
+        [K.tilde, K.exclamation, K.at, K.numberSign, K.dollar, K.percent, K.caret, K.ampersand, K.asterisk, K.parenthesisLeft, K.parenthesisRight, K.underscore, K.add, K.backspace],
+        [K.tab, K.keyQ, K.keyW, K.keyE, K.keyR, K.keyT, K.keyY, K.keyU, K.keyI, K.keyO, K.keyP, K.braceLeft, K.braceRight, K.bar],
+        [K.capsLock, K.keyA, K.keyS, K.keyD, K.keyF, K.keyG, K.keyH, K.keyJ, K.keyK, K.keyL, K.colon, K.quote, K.enter],
+        [K.shiftLeft, K.keyZ, K.keyX, K.keyC, K.keyV, K.keyB, K.keyN, K.keyM, K.less, K.greater, K.slash, K.shiftRight],
+        [K.fn, K.controlLeft, K.altLeft, K.metaLeft, K.space, K.metaRight, K.altRight, K.escape]
+      ],
+
+      customWidths: {
+        K.backspace: 1.5,
+        K.tab: 1.5,
+        K.capsLock: 1.84,
+        K.enter: 1.84,
+        K.shiftLeft: 2.4,
+        K.shiftRight: 2.4,
+
+        K.metaLeft: 1.25,
+        K.space: 6.15,
+        K.metaRight: 1.25,
+        K.escape: 3,
       }
     );
   }
 
-  static const Map<String, LogicalKeyboardKey> logicals = {
-    '`': LogicalKeyboardKey.backquote,
-    '1': LogicalKeyboardKey.digit1,
-    '2': LogicalKeyboardKey.digit2,
-    '3': LogicalKeyboardKey.digit3,
-    '4': LogicalKeyboardKey.digit4,
-    '5': LogicalKeyboardKey.digit5,
-    '6': LogicalKeyboardKey.digit6,
-    '7': LogicalKeyboardKey.digit7,
-    '8': LogicalKeyboardKey.digit8,
-    '9': LogicalKeyboardKey.digit9,
-    '0': LogicalKeyboardKey.digit0,
-    '-': LogicalKeyboardKey.minus,
-    '=': LogicalKeyboardKey.equal,
-    'Backspace': LogicalKeyboardKey.backspace,
+  final List<List<LogicalKeyboardKey>> keys;
+  final List<List<LogicalKeyboardKey>> altKeys;
+  final Map<LogicalKeyboardKey, double> customWidths;
 
-    'Tab': LogicalKeyboardKey.tab,
-    'q': LogicalKeyboardKey.keyQ,
-    'w': LogicalKeyboardKey.keyW,
-    'e': LogicalKeyboardKey.keyE,
-    'r': LogicalKeyboardKey.keyR,
-    't': LogicalKeyboardKey.keyT,
-    'y': LogicalKeyboardKey.keyY,
-    'u': LogicalKeyboardKey.keyU,
-    'i': LogicalKeyboardKey.keyI,
-    'o': LogicalKeyboardKey.keyO,
-    'p': LogicalKeyboardKey.keyP,
-    '[': LogicalKeyboardKey.braceLeft,
-    ']': LogicalKeyboardKey.bracketRight,
-    '\\': LogicalKeyboardKey.backslash,
-
-    'Caps Lock': LogicalKeyboardKey.capsLock,
-    'a': LogicalKeyboardKey.keyA,
-    's': LogicalKeyboardKey.keyS,
-    'd': LogicalKeyboardKey.keyD,
-    'f': LogicalKeyboardKey.keyF,
-    'g': LogicalKeyboardKey.keyG,
-    'h': LogicalKeyboardKey.keyH,
-    'j': LogicalKeyboardKey.keyJ,
-    'k': LogicalKeyboardKey.keyK,
-    'l': LogicalKeyboardKey.keyL,
-    ';': LogicalKeyboardKey.semicolon,
-    '\'': LogicalKeyboardKey.quoteSingle,
-    'Enter': LogicalKeyboardKey.enter,
-
-    'Shift Left': LogicalKeyboardKey.shiftLeft,
-    'z': LogicalKeyboardKey.keyZ,
-    'x': LogicalKeyboardKey.keyX,
-    'c': LogicalKeyboardKey.keyC,
-    'v': LogicalKeyboardKey.keyV,
-    'b': LogicalKeyboardKey.keyB,
-    'n': LogicalKeyboardKey.keyN,
-    'm': LogicalKeyboardKey.keyM,
-    ',': LogicalKeyboardKey.comma,
-    '.': LogicalKeyboardKey.period,
-    '/': LogicalKeyboardKey.slash,
-    'Shift Right': LogicalKeyboardKey.shiftRight,
-
-    'Fn': LogicalKeyboardKey.fn,
-    'Control Left': LogicalKeyboardKey.controlLeft,
-    'Alt Left': LogicalKeyboardKey.altLeft,
-    'Meta Left': LogicalKeyboardKey.metaLeft,
-    ' ': LogicalKeyboardKey.space,
-    'Meta Right': LogicalKeyboardKey.metaRight,
-    'Alt Right': LogicalKeyboardKey.altRight,
-
-    'Arrow Left': LogicalKeyboardKey.arrowLeft,
-    'Arrow Down': LogicalKeyboardKey.arrowDown,
-    'Arrow Up': LogicalKeyboardKey.arrowUp,
-    'Arrow Right': LogicalKeyboardKey.arrowRight,
-  };
-
-  final Map<String, double> customWidths;
   final double keyBaseSize;
-  final List<List<String>> keyLabels;
 
   List<List<KeyboardKeyInfo>>? _keys;
 
   double get keySpacing => keyBaseSize  / 10;
-  List<List<KeyboardKeyInfo>> get keys {
-    _keys ??= keyLabels.map((row) =>
-      row.map((character) =>
-        KeyboardKeyInfo(
-          logicalKey: logicals[character] ?? LogicalKeyboardKey.escape,
-          size: sizeOf(character),
-        )
-      ).toList()
-    ).toList();
+  // List<List<KeyboardKeyInfo>> keys;
+  // List<List<KeyboardKeyInfo>> altKeys;
 
-    return _keys!;
-  }
-
-  LogicalKeyboardKey? logicalOf(String regular) {
-    return logicals[regular];
-  }
 
   Size sizeOf(String keyLabel) {
     return Size(
