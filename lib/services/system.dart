@@ -57,6 +57,8 @@ class SystemService {
 
 class TextGenerator {
   final int _maxWordLenght = 5;
+  final int _capitalsPercentage = 20;
+  final int _numbersPercentage = 15;
 
   String _generateWord(List<String> characters, bool ignore) {
     Random random = Random();
@@ -77,18 +79,39 @@ class TextGenerator {
   }
 
   String generateText(Settings settings) {
+    Random random = Random();
     String text = '';
 
-    // print('>>> ${!settings.repeatLetter}');
-
     while(text.length < settings.textLength) {
-      text += _generateWord(
-        settings.currentLesson?.characters ?? 'monkey'.split(''),
+      String word = _generateWord(
+        settings.useNumbers && random.nextInt(100) < _numbersPercentage
+          ? ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+          : settings.currentLesson?.characters ?? 'monkey'.split(''),
         !settings.repeatLetter
-      ) + ' ';
+      );
+
+      // Discard 1 char words if it's not a vowel nor a number
+      if(word.length == 1 && !word.contains(RegExp(r'([0-9]|[aeiou])'))) {
+        continue;
+      }
+
+      text += word + ' ';
     }
 
+    // Capitalize words randomly
+    if(settings.useCapitalLetters) {
+      text = text.trim().split(' ').map((word) =>
+        random.nextInt(100) < _capitalsPercentage
+          ? word
+          : word[0].toUpperCase() + word.substring(1)
+      ).join(' ') + ' ';
+    }
 
-    return text.substring(0, settings.textLength).trim();
+    // Make sure we don't exceed the max length defined by the user
+    text = text.substring(0, settings.textLength).trim();
+
+    return settings.useCapitalLetters
+      ? text[0].toUpperCase() + text.substring(1)
+      : text;
   }
 }
