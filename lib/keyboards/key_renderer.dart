@@ -89,7 +89,7 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
       case 'Alt Right':
         return 'option';
       default:
-        return _logicalKey.keyLabel.toLowerCase();
+        return _logicalKey.keyLabel;
     }
   }
 

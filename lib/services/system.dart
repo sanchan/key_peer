@@ -106,22 +106,33 @@ class TextGenerator {
           ? word[0].toUpperCase() + word.substring(1)
           : word
       ).join(' ') + ' ';
+
+      text = text[0].toUpperCase() + text.substring(1);
     }
 
     // Add punctuation simbols
     if(settings.usePunctuation) {
-      text = text.trim().split(' ').map((word) =>
+      List<String> words = text.trim().split(' ').map((word) =>
         random.nextInt(100) < _punctuationPercentage
           ? '$word${(['.', ',', ';', ':'].toList()..shuffle()).first}'
           : word
-      ).join(' ') + ' ';
+      ).toList();
+
+      // Capitalize next word after '.'
+      text = words[0];
+      for (var i = 1; i < words.length; i++) {
+        String prevWord = words[i - 1];
+        String word = words[i];
+        text += prevWord[prevWord.length - 1] == '.'
+          ? word[0].toUpperCase() + word.substring(1)
+          : word;
+        text += ' ';
+      }
     }
 
     // Make sure we don't exceed the max length defined by the user
-    text = text.substring(0, settings.textLength).trim();
+    text = text.trim().substring(0, settings.textLength).trim();
 
-    return settings.useCapitalLetters
-      ? text[0].toUpperCase() + text.substring(1)
-      : text;
+    return text;
   }
 }
