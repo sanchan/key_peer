@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:key_peer/services/lesson_config.dart';
-import 'package:key_peer/services/settings.dart';
-import 'package:key_peer/services/system.dart';
+import 'package:key_peer/models/lesson_config.dart';
+import 'package:key_peer/models/settings.dart';
+import 'package:key_peer/services/system_service.dart';
 import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
 
@@ -16,31 +16,30 @@ class SettingsDrawer extends StatefulWidget {
 }
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
-
   final List<LessonConfig> _lessons = [
     const LessonConfig(
       id: 1,
-      characters: ['e', 't', 'a', 'o']
+      characters: ['e', 't', 'a', 'o'],
     ),
     const LessonConfig(
       id: 2,
-      characters: ['n', 'i', 'h', 's', 'r']
+      characters: ['n', 'i', 'h', 's', 'r'],
     ),
     const LessonConfig(
       id: 3,
-      characters: ['d', 'l', 'u', 'm']
+      characters: ['d', 'l', 'u', 'm'],
     ),
     const LessonConfig(
       id: 4,
-      characters: ['w', 'c', 'g', 'f']
+      characters: ['w', 'c', 'g', 'f'],
     ),
     const LessonConfig(
       id: 5,
-      characters: ['y', 'p', 'b', 'v', 'k']
+      characters: ['y', 'p', 'b', 'v', 'k'],
     ),
     const LessonConfig(
       id: 6,
-      characters: ['\'', 'j', 'x', 'q', 'z']
+      characters: ["'", 'j', 'x', 'q', 'z'],
     ),
   ];
 
@@ -48,26 +47,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     SystemService.generateTargetText();
   }
 
-  void _handleChangeLesson(LessonConfig lessonConfig) {
-    Settings settings = SystemService.settings.value.clone()
-      ..currentLesson = lessonConfig;
-
-    SystemService.settings.value = settings;
-
-    _generateTargetText();
-  }
-
-  void _handleChangeTextLength(int length) {
-    Settings settings = SystemService.settings.value.clone()
-      ..textLength = length;
-
-    SystemService.settings.value = settings;
-
-    _generateTargetText();
-  }
-
   void _handleChangeCapitalLetters(bool value) {
-    Settings settings = SystemService.settings.value.clone()
+    final settings = SystemService.settings.value.clone()
       ..useCapitalLetters = value;
 
     SystemService.settings.value = settings;
@@ -75,8 +56,17 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     _generateTargetText();
   }
 
+  void _handleChangeLesson(LessonConfig lessonConfig) {
+    final settings = SystemService.settings.value.clone()
+      ..currentLesson = lessonConfig;
+
+    SystemService.settings.value = settings;
+
+    _generateTargetText();
+  }
+
   void _handleChangeNumbers(bool value) {
-    Settings settings = SystemService.settings.value.clone()
+    final settings = SystemService.settings.value.clone()
       ..useNumbers = value;
 
     SystemService.settings.value = settings;
@@ -85,7 +75,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
   }
 
   void _handleChangePunctuation(bool value) {
-    Settings settings = SystemService.settings.value.clone()
+    final settings = SystemService.settings.value.clone()
       ..usePunctuation = value;
 
     SystemService.settings.value = settings;
@@ -94,8 +84,21 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
   }
 
   void _handleChangeRepeatLetters(bool value) {
-    Settings settings = SystemService.settings.value.clone()
+    final settings = SystemService.settings.value.clone()
       ..repeatLetter = value;
+
+    SystemService.settings.value = settings;
+
+    _generateTargetText();
+  }
+
+  void _handleChangeTextLength(int? length) {
+    if(length == null) {
+      return;
+    }
+
+    final settings = SystemService.settings.value.clone()
+      ..textLength = length;
 
     SystemService.settings.value = settings;
 
@@ -108,8 +111,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       decoration: BoxDecoration(
         color: MacosColors.alternatingContentBackgroundColor,
         border: Border(
-          left: BorderSide(width: 1, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
-        )
+          left: BorderSide(color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
+        ),
       ),
       padding: const EdgeInsets.symmetric(
         vertical: 16.0,
@@ -135,7 +138,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                           children: [
                             Text('Lesson ${lesson.key + 1}: ${lesson.value.characters.join(' ')}'),
                             if(settings.currentLesson?.id == lesson.value.id)
-                            const MacosIcon(CupertinoIcons.check_mark, size: 16,)
+                            const MacosIcon(CupertinoIcons.check_mark, size: 16,),
                           ],
                         ),
                       ),
@@ -191,9 +194,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                           const Text('Text length'),
                           MacosPopupButton<int>(
                             value: settings.textLength,
-                            onChanged: (int? newValue) {
-                              _handleChangeTextLength(newValue!);
-                            },
+                            onChanged: _handleChangeTextLength,
                             items: <int>[70, 40, 25]
                               .map<MacosPopupMenuItem<int>>((int value) {
                                 return MacosPopupMenuItem<int>(
@@ -201,11 +202,11 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                                   child: Text('$value'),
                                 );
                               }).toList(),
-                          )
+                          ),
                         ],
                       ),
                     ),
-                  ]
+                  ],
                 ),
               ],
             );
@@ -232,7 +233,7 @@ class _SettingsBlockTitle extends StatelessWidget {
       ),
       child: Text(
         title.toUpperCase(),
-        style: MacosTheme.of(context).typography.body.copyWith(color: Colors.grey[400])
+        style: MacosTheme.of(context).typography.body.copyWith(color: Colors.grey[400]),
       ),
     );
   }
@@ -253,9 +254,9 @@ class _SettingsBlock extends StatelessWidget {
       decoration: BoxDecoration(
         color: darken(MacosColors.alternatingContentBackgroundColor, 0.02),
         border: Border(
-          top: BorderSide(width: 1, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
-          bottom: BorderSide(width: 1, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
-        )
+          top: BorderSide(color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
+          bottom: BorderSide(color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
+        ),
       ),
       child: ListView(
         shrinkWrap: true,
@@ -273,9 +274,9 @@ class _SettingsBlockItem extends StatelessWidget {
     required this.child,
   }) : super(key: key);
 
+  final Widget child;
   final bool isFirst;
   final bool isLast;
-  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -294,7 +295,7 @@ class _SettingsBlockItem extends StatelessWidget {
           bottom: isLast
             ? BorderSide.none
             : BorderSide(width: 0.5, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
-        )
+        ),
       ),
       child: child,
     );
@@ -310,8 +311,8 @@ class _SettingsSwitchItem extends StatelessWidget {
   }) : super(key: key);
 
   final String label;
-  final bool value;
   final Function(bool) onChanged;
+  final bool value;
 
   @override
   Widget build(BuildContext context) {
@@ -321,8 +322,8 @@ class _SettingsSwitchItem extends StatelessWidget {
         Text(label),
         MacosSwitch(
           value: value,
-          onChanged: onChanged
-        )
+          onChanged: onChanged,
+        ),
       ],
     );
   }

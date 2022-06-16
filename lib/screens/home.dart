@@ -9,7 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:key_peer/keyboards/keyboard_en.dart';
 import 'package:key_peer/scoreboard.dart';
-import 'package:key_peer/services/system.dart';
+import 'package:key_peer/services/system_service.dart';
 import 'package:key_peer/settings_drawer.dart';
 import 'package:key_peer/typed_text.dart';
 import 'package:window_manager/window_manager.dart';
@@ -21,12 +21,14 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
+// ignore: prefer_mixin
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin, WindowListener {
-  final FocusNode _focusMainNode = FocusNode();
-  final FocusNode _focusSettingsNode = FocusNode();
-  late AnimationController _drawerAnimation;
-  bool _isDrawerOpen = false;
-  bool _isFullscreen = false;
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -36,29 +38,34 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
 
     _drawerAnimation = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 250)
+      duration: const Duration(milliseconds: 250),
     )..value = 0.0;
   }
 
   @override
-  void dispose() {
-    windowManager.removeListener(this);
-
-    super.dispose();
-  }
-
-  @override
-  void onWindowEnterFullScreen() async {
+  Future<void> onWindowEnterFullScreen() async {
     setState(() {
       _isFullscreen = true;
     });
   }
 
   @override
-  void onWindowLeaveFullScreen() async {
+  Future<void> onWindowLeaveFullScreen() async {
     setState(() {
       _isFullscreen = false;
     });
+  }
+
+  late AnimationController _drawerAnimation;
+  final FocusNode _focusMainNode = FocusNode();
+  final FocusNode _focusSettingsNode = FocusNode();
+  bool _isDrawerOpen = false;
+  bool _isFullscreen = false;
+
+  void _handleCloseDrawer() {
+    _drawerAnimation.reverse().orCancel;
+    _isDrawerOpen = false;
+    FocusScope.of(context).requestFocus(_focusMainNode);
   }
 
   void _handleToggleDrawer() {
@@ -67,29 +74,25 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
     } else {
       _isDrawerOpen = true;
       FocusScope.of(context).requestFocus(_focusSettingsNode);
-      _drawerAnimation.forward();
+      _drawerAnimation.forward().orCancel;
     }
   }
 
-  void _handleCloseDrawer() {
-    _drawerAnimation.reverse();
-    _isDrawerOpen = false;
-    FocusScope.of(context).requestFocus(_focusMainNode);
+  KeyEventResult _onKey(_, RawKeyEvent event) {
+    if(!_isDrawerOpen) {
+      SystemService.keyEventController.addEvent(event);
+    }
+
+    return _isDrawerOpen
+      ? KeyEventResult.ignored
+      : KeyEventResult.handled;
   }
 
   @override
   Widget build(BuildContext context) {
     return Focus(
       focusNode: _focusMainNode,
-      onKey: (_, RawKeyEvent event) {
-        if(!_isDrawerOpen) {
-          SystemService.keyEventController.addEvent(event);
-        }
-
-        return _isDrawerOpen
-          ? KeyEventResult.ignored
-          : KeyEventResult.handled;
-      },
+      onKey: _onKey,
       autofocus: true,
       child: CupertinoPageScaffold(
         backgroundColor: _isFullscreen
@@ -117,7 +120,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
                       ],
                     ),
                   );
-                }
+                },
               ),
             ),
 
@@ -126,12 +129,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
               builder: (_, __) {
                 final opacity = Tween<double>(
                   begin: 1.0,
-                  end: 0.0
+                  end: 0.0,
                 ).animate(
                   CurvedAnimation(
                     parent: _drawerAnimation,
-                    curve: const Interval(0.0, 0.4, curve: Curves.fastOutSlowIn)
-                  )
+                    curve: const Interval(0.0, 0.4, curve: Curves.fastOutSlowIn),
+                  ),
                 );
 
                 return Positioned(
@@ -152,7 +155,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
                     ),
                   ),
                 );
-              }
+              },
             ),
 
             AnimatedBuilder(
@@ -160,20 +163,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
               builder: (_, __) {
                 final offset = Tween<Offset>(
                   begin: const Offset(0,0),
-                  end: const Offset(250, 0)
+                  end: const Offset(250, 0),
                 ).animate(
                   CurvedAnimation(
                     parent: _drawerAnimation,
-                    curve: const Interval(0.4, 1.0, curve: Curves.linear)
-                  )
+                    curve: const Interval(0.4, 1.0),
+                  ),
                 );
 
                 return Positioned(
                   right: -250 + offset.value.dx,
                   height: MediaQuery.of(context).size.height,
-                  child: const SettingsDrawer()
+                  child: const SettingsDrawer(),
                 );
-              }
+              },
             ),
 
             Align(
@@ -188,10 +191,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
                 numberOfParticles: 50,
                 gravity: 0.7,
               ),
-            )
+            ),
           ],
         ),
-      )
+      ),
     );
   }
 }

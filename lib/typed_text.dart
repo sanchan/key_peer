@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:key_peer/services/system.dart';
+import 'package:key_peer/services/system_service.dart';
 import 'package:key_peer/utils/key_event_controller.dart';
-
-enum TypedKeyStatus {
-  none,
-  correct,
-  error,
-  corrected,
-}
 
 class TypedText extends StatefulWidget {
   const TypedText({
@@ -20,8 +13,6 @@ class TypedText extends StatefulWidget {
 }
 
 class _TypedTextState extends State<TypedText> {
-  int _cursorIndex = 0;
-
   @override
   void dispose() {
     super.dispose();
@@ -45,6 +36,8 @@ class _TypedTextState extends State<TypedText> {
   List<TypedKeyStatus> get _statuses => SystemService.statuses.value;
   String get _targetText => SystemService.targetText.value;
 
+  int _cursorIndex = 0;
+
   void _handleEventChange() {
     if(_isLessonCompleted) {
       return;
@@ -65,20 +58,30 @@ class _TypedTextState extends State<TypedText> {
       return _moveCursorRight();
     }
 
-    if(event?.logicalKey.keyLabel.toLowerCase() == _targetText[_cursorIndex]) {
-      if(
-        _statuses[_cursorIndex] == TypedKeyStatus.none ||
-        _statuses[_cursorIndex] == TypedKeyStatus.correct
-      ) {
-        _updateStatus(_cursorIndex, TypedKeyStatus.correct);
-      } else {
-        _updateStatus(_cursorIndex, TypedKeyStatus.corrected);
-      }
-    } else {
-      _updateStatus(_cursorIndex, TypedKeyStatus.error);
-    }
+    if(event != null) {
+      var keyLabel = event.logicalKey.keyLabel;
+      final modifiers = event.data.modifiersPressed;
+      keyLabel =
+        modifiers.containsKey(ModifierKey.shiftModifier) ||
+        modifiers.containsKey(ModifierKey.capsLockModifier)
+          ? keyLabel.toUpperCase()
+          : keyLabel.toLowerCase();
 
-    _moveCursorRight();
+      if(keyLabel == _targetText[_cursorIndex]) {
+        if(
+          _statuses[_cursorIndex] == TypedKeyStatus.none ||
+          _statuses[_cursorIndex] == TypedKeyStatus.correct
+        ) {
+          _updateStatus(_cursorIndex, TypedKeyStatus.correct);
+        } else {
+          _updateStatus(_cursorIndex, TypedKeyStatus.corrected);
+        }
+      } else {
+        _updateStatus(_cursorIndex, TypedKeyStatus.error);
+      }
+
+      _moveCursorRight();
+    }
   }
 
   void _handleTargetTextChange() {
@@ -105,11 +108,28 @@ class _TypedTextState extends State<TypedText> {
 
   set _statuses(List<TypedKeyStatus> newStatuses) => SystemService.statuses.value = newStatuses;
 
-  _updateStatus(int index, TypedKeyStatus status) => SystemService.updateStatus(index, status);
+  void _updateStatus(int index, TypedKeyStatus status) => SystemService.updateStatus(index, status);
+
+  Color _textColor(int index) {
+    switch (_statuses[index]) {
+      case TypedKeyStatus.none:
+        return _cursorIndex == index
+          ? Colors.black
+          : Colors.grey;
+      case TypedKeyStatus.correct:
+        return _cursorIndex == index && !_isLessonCompleted
+          ? Colors.black
+          : Colors.white;
+      case TypedKeyStatus.error:
+        return Colors.red;
+      case TypedKeyStatus.corrected:
+        return Colors.blue;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<TextSpan> richCharacters = [];
+    final richCharacters = <TextSpan>[];
 
     for (var i = 0; i < _targetText.length; i++) {
       final char = _targetText[i];
@@ -122,21 +142,9 @@ class _TypedTextState extends State<TypedText> {
               backgroundColor: _cursorIndex == i && !_isLessonCompleted
                 ? Colors.grey[300]
                 : null,
-              color: _statuses[i] == TypedKeyStatus.none
-                ? _cursorIndex == i
-                  ? Colors.black
-                  : Colors.grey
-                : _statuses[i] == TypedKeyStatus.correct
-                  ? _cursorIndex == i && !_isLessonCompleted
-                    ? Colors.black
-                    : Colors.white
-                  : _statuses[i] == TypedKeyStatus.error
-                    ? Colors.red
-                    : _statuses[i] == TypedKeyStatus.corrected
-                      ? Colors.blue
-                      : Colors.blue
-            )
-          )
+              color: _textColor(i),
+            ),
+          ),
         );
     }
 
@@ -146,9 +154,16 @@ class _TypedTextState extends State<TypedText> {
         textAlign: TextAlign.center,
         text: TextSpan(
           children: richCharacters,
-          style: const TextStyle(fontFamily: 'Courier New', fontSize: 24)
-        )
+          style: const TextStyle(fontFamily: 'Courier New', fontSize: 24),
+        ),
       ),
     );
   }
+}
+
+enum TypedKeyStatus {
+  none,
+  correct,
+  error,
+  corrected,
 }

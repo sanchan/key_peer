@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:key_peer/keyboards/key_renderer.dart';
-import 'package:key_peer/services/system.dart';
+import 'package:key_peer/services/system_service.dart';
 import 'package:key_peer/utils/keyboard_config/keyboard_config.dart';
 
 class KeyboardEn extends StatelessWidget {
@@ -25,10 +25,10 @@ class KeyboardEn extends StatelessWidget {
                     child: KeyRenderer(
                       keyInfo: key,
                     ),
-                  )
+                  ),
                 ).toList(),
               ),
-            )
+            ),
           ).toList(),
         ),
     );

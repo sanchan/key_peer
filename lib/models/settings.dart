@@ -1,4 +1,4 @@
-import 'package:key_peer/services/lesson_config.dart';
+import 'package:key_peer/models/lesson_config.dart';
 
 class Settings {
   Settings({
@@ -13,8 +13,8 @@ class Settings {
 
   LessonConfig? currentLesson;
   int maxErrors;
-  int textLength;
   bool repeatLetter;
+  int textLength;
   bool useCapitalLetters;
   bool useNumbers;
   bool usePunctuation;

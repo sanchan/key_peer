@@ -11,7 +11,7 @@ class KeyboardConfig {
     required List<List<LogicalKeyboardKey>> keys,
     required List<List<LogicalKeyboardKey>> altKeys,
     required Map<LogicalKeyboardKey, double> customWidths,
-    this.baseKeySize = 60.0
+    this.baseKeySize = 60.0,
   }) {
     keysInfo = [];
     for (var i = 0; i < keys.length; i++) {
@@ -22,21 +22,21 @@ class KeyboardConfig {
           KeyboardKeyInfo(
             key: keys[i][j],
             altKey: altKeys[i][j],
-            size: _sizeOf(keys[i][j], customWidths)
-          )
+            size: _sizeOf(keys[i][j], customWidths),
+          ),
         );
       }
     }
   }
 
-  factory KeyboardConfig.forLang({String lang = 'en'}) {
+  factory KeyboardConfig.forLang() {
     return KeyboardConfig(
       keys: [
         [K.backquote, K.digit1, K.digit2, K.digit3, K.digit4, K.digit5, K.digit6, K.digit7, K.digit8, K.digit9, K.digit0, K.minus, K.equal, K.backspace],
         [K.tab, K.keyQ, K.keyW, K.keyE, K.keyR, K.keyT, K.keyY, K.keyU, K.keyI, K.keyO, K.keyP, K.bracketLeft, K.bracketRight, K.backslash],
         [K.capsLock, K.keyA, K.keyS, K.keyD, K.keyF, K.keyG, K.keyH, K.keyJ, K.keyK, K.keyL, K.semicolon, K.quoteSingle, K.enter],
         [K.shiftLeft, K.keyZ, K.keyX, K.keyC, K.keyV, K.keyB, K.keyN, K.keyM, K.comma, K.period, K.slash, K.shiftRight],
-        [K.fn, K.controlLeft, K.altLeft, K.metaLeft, K.space, K.metaRight, K.altRight, K.escape]
+        [K.fn, K.controlLeft, K.altLeft, K.metaLeft, K.space, K.metaRight, K.altRight, K.escape],
       ],
 
       altKeys: [
@@ -44,7 +44,7 @@ class KeyboardConfig {
         [K.tab, K.keyQ, K.keyW, K.keyE, K.keyR, K.keyT, K.keyY, K.keyU, K.keyI, K.keyO, K.keyP, K.braceLeft, K.braceRight, K.bar],
         [K.capsLock, K.keyA, K.keyS, K.keyD, K.keyF, K.keyG, K.keyH, K.keyJ, K.keyK, K.keyL, K.colon, K.quote, K.enter],
         [K.shiftLeft, K.keyZ, K.keyX, K.keyC, K.keyV, K.keyB, K.keyN, K.keyM, K.less, K.greater, K.slash, K.shiftRight],
-        [K.fn, K.controlLeft, K.altLeft, K.metaLeft, K.space, K.metaRight, K.altRight, K.escape]
+        [K.fn, K.controlLeft, K.altLeft, K.metaLeft, K.space, K.metaRight, K.altRight, K.escape],
       ],
 
       customWidths: {
@@ -59,7 +59,7 @@ class KeyboardConfig {
         K.space: 6.15,
         K.metaRight: 1.25,
         K.escape: 3,
-      }
+      },
     );
   }
 
@@ -71,7 +71,7 @@ class KeyboardConfig {
   Size _sizeOf(LogicalKeyboardKey key, Map<LogicalKeyboardKey, double> customWidths) {
     return Size(
       (customWidths[key] ?? 1) * baseKeySize,
-      baseKeySize
+      baseKeySize,
     );
   }
 }

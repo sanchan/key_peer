@@ -8,7 +8,7 @@ class KeyboardKeyInfo {
     required this.size,
   });
 
-  final LogicalKeyboardKey key;
   final LogicalKeyboardKey altKey;
+  final LogicalKeyboardKey key;
   final Size size;
 }

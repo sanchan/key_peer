@@ -29,7 +29,7 @@ class Scoreboard extends StatelessWidget {
             icon: CupertinoIcons.flag_fill,
             value: '3',
             caption: 'errors',
-          )
+          ),
         ],
       ),
     );
@@ -44,9 +44,9 @@ class ScoreboardItem extends StatelessWidget {
     required this.caption,
   }) : super(key: key);
 
+  final String caption;
   final IconData icon;
   final String value;
-  final String caption;
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +60,10 @@ class ScoreboardItem extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 blurRadius: 1.0,
-                color: darken(MacosColors.alternatingContentBackgroundColor, 0.1),
-                offset: const Offset(0, 1.0)
-              )
-            ]
+                color: darken(MacosColors.alternatingContentBackgroundColor),
+                offset: const Offset(0, 1.0),
+              ),
+            ],
           ),
           child: MacosIcon(
             icon,
@@ -78,11 +78,11 @@ class ScoreboardItem extends StatelessWidget {
             Text(caption, style: MacosTheme.of(context).typography.body
               .copyWith(
                 fontSize: 14,
-                color: Colors.grey[500]
-              )
+                color: Colors.grey[500],
+              ),
             ),
           ],
-        )
+        ),
       ],
     );
   }

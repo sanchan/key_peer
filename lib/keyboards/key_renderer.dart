@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:key_peer/services/system.dart';
+import 'package:key_peer/services/system_service.dart';
 import 'package:key_peer/utils/key_event_controller.dart';
 import 'package:key_peer/utils/keyboard_config/keyboard_key_info.dart';
 
 class KeyRenderer extends StatefulWidget {
   const KeyRenderer({
     required this.keyInfo,
-    Key? key
+    Key? key,
   }) : super(key: key);
 
   final KeyboardKeyInfo keyInfo;
@@ -16,9 +16,8 @@ class KeyRenderer extends StatefulWidget {
   State<KeyRenderer> createState() => _KeyRendererState();
 }
 
-class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
+class _KeyRendererState extends State<KeyRenderer>
+    with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
@@ -34,7 +33,7 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200)
+      duration: const Duration(milliseconds: 200),
     )..value = 1.0;
   }
 
@@ -42,7 +41,7 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
   String get _keyLabel => _logicalKey.keyLabel;
   Size get _keySize => widget.keyInfo.size;
   AlignmentGeometry get _keyTextAlignment {
-    if(_keyLabel.length == 1) {
+    if (_keyLabel.length == 1) {
       return Alignment.center;
     }
 
@@ -94,21 +93,23 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
   }
 
   double get fontSize {
-    if(_keyLabel.length == 1) {
+    if (_keyLabel.length == 1) {
       return 16.0;
     }
 
     return 13.0;
   }
 
+  late AnimationController _animationController;
+
   void _handleEventChange() {
     final event = _eventController.event;
 
-    if(event?.logicalKey == _logicalKey) {
-      if(event is RawKeyDownEvent) {
+    if (event?.logicalKey == _logicalKey) {
+      if (event is RawKeyDownEvent) {
         _animationController.reset();
       } else if (event is RawKeyUpEvent) {
-        _animationController.forward();
+        _animationController.forward().orCancel;
       }
     }
   }
@@ -120,7 +121,7 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
       builder: (_, __) {
         final color = ColorTween(
           begin: Colors.blue,
-          end: Colors.grey[900]!.withOpacity(0.5)
+          end: Colors.grey[900]?.withOpacity(0.5),
           // end: Colors.transparent
         ).animate(_animationController);
 
@@ -133,7 +134,7 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
             border: Border.all(
               color: Colors.white,
             ),
-            borderRadius: BorderRadius.circular(6.0)
+            borderRadius: BorderRadius.circular(6.0),
           ),
           child: Align(
             alignment: _keyTextAlignment,
