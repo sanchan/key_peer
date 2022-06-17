@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/bloc/cubits/errors_cubit.dart';
+import 'package:key_peer/bloc/cubits/game_status_cubit.dart';
 import 'package:key_peer/bloc/cubits/keyboard_config_cubit.dart';
 import 'package:key_peer/bloc/cubits/keyboard_cubit.dart';
 import 'package:key_peer/bloc/cubits/speedometer_cubit.dart';
+import 'package:key_peer/bloc/cubits/text_cubit.dart';
 import 'package:key_peer/screens/home.dart';
 import 'package:macos_ui/macos_ui.dart';
 
@@ -30,8 +32,10 @@ class ThemedCupertinoApp extends StatelessWidget {
         providers: [
           BlocProvider(create: (_) => Blocs.get<KeyboardConfigCubit>()),
           BlocProvider(create: (_) => Blocs.get<KeyboardCubit>()),
-          BlocProvider(create: (_) => Blocs.get<SpeedometerCubit>()),
+          BlocProvider(create: (_) => Blocs.get<GameStatusCubit>()),
+          BlocProvider(create: (_) => Blocs.get<TextCubit>()),
           BlocProvider(create: (_) => Blocs.get<ErrorsCubit>()),
+          BlocProvider(create: (_) => Blocs.get<SpeedometerCubit>()),
         ],
         child: const Home(),
       ),

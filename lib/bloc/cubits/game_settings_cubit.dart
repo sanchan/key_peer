@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/models/text_generator.dart';
 import 'package:key_peer/utils/types.dart';
 
 class GameSettingsCubit extends Cubit<GameSettings> {
@@ -9,6 +10,7 @@ class GameSettingsCubit extends Cubit<GameSettings> {
 @immutable
 class GameSettings {
   const GameSettings({
+    this.textGenerator = const TextGenerator(),
     this.currentLesson,
     this.repeatLetter = false,
     this.useCapitalLetters = false,
@@ -18,6 +20,7 @@ class GameSettings {
     this.maxErrors = 10,
   });
 
+  final TextGenerator textGenerator;
   final LessonConfig? currentLesson;
   final int maxErrors;
   final bool repeatLetter;

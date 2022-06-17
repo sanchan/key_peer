@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
+import 'package:key_peer/bloc/cubits/game_status_cubit.dart';
 import 'package:key_peer/bloc/cubits/keyboard_cubit.dart';
 import 'package:key_peer/bloc/cubits/text_cubit.dart';
 import 'package:key_peer/utils/enums.dart';
@@ -17,7 +18,7 @@ class TypedText extends StatefulWidget {
 
 class _TypedTextState extends State<TypedText> {
 
-  bool get _isLessonCompleted => Blocs.get<GameStatus>() == GameStatus.completed;
+  bool get _isLessonCompleted => Blocs.get<GameStatusCubit>().state == GameStatus.completed;
   List<TypedKeyStatus> get _statuses => Blocs.get<TextCubit>().statuses;
   String get _targetText => Blocs.get<TextCubit>().targetText;
 
