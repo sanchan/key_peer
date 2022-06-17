@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/bloc/cubits/keyboard_config_cubit.dart';
 import 'package:key_peer/keyboards/key_renderer.dart';
-import 'package:key_peer/state/blocs/game_bloc/game_bloc.dart';
-import 'package:key_peer/state/blocs/game_bloc/game_state.dart';
-import 'package:key_peer/state/models/keyboard_config.dart';
 
 class KeyboardEn extends StatelessWidget {
   const KeyboardEn({
@@ -12,8 +10,7 @@ class KeyboardEn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<GameBloc, GameState, KeyboardConfig>(
-      selector: (state) => state.settings.keyboardConfig,
+    return BlocBuilder<KeyboardConfigCubit, KeyboardConfig>(
       builder: (_, KeyboardConfig keyboardConfig) =>
         Column(
           children: keyboardConfig.keysInfo.map((row) =>

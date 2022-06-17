@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SpeedometerCubic extends Cubit<SpeedometerState> {
-  SpeedometerCubic() : super(SpeedometerState(value: 0));
+class SpeedometerCubit extends Cubit<SpeedometerState> {
+  SpeedometerCubit() : super(SpeedometerState(value: 0));
 
   void increment() => emit(state.copyWith(value: state.value + 1));
 
@@ -16,8 +16,8 @@ class SpeedometerState {
     this.label = 'chars/min',
   });
 
-  int value;
-  String label;
+  final int value;
+  final String label;
 
   SpeedometerState copyWith({
     int? value,

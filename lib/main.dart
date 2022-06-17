@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
-import 'package:key_peer/state/blocs.dart';
+import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/themed_cupertino_app.dart';
 import 'package:window_manager/window_manager.dart';
 

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:key_peer/services/system_service.dart';
-import 'package:key_peer/state/blocs.dart';
-import 'package:key_peer/state/blocs/game_bloc/game_bloc.dart';
-import 'package:key_peer/state/models/lesson_config.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/bloc/blocs.dart';
+import 'package:key_peer/bloc/cubits/game_settings_cubit.dart';
+import 'package:key_peer/bloc/cubits/text_cubit.dart';
 import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
 
@@ -44,53 +44,55 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     ),
   ];
 
+  GameSettings get _settings => Blocs.get<GameSettings>();
+
   void _generateTargetText() {
-    Blocs.get<GameBloc>().generateTargetText();
+    Blocs.get<TextCubit>().generateTargetText();
   }
 
   void _handleChangeCapitalLetters(bool value) {
-    final settings = SystemService.settings.value.clone()
-      ..useCapitalLetters = value;
+    // final settings = _settings.clone()
+    //   ..useCapitalLetters = value;
 
-    SystemService.settings.value = settings;
+    // _settings = settings;
 
-    _generateTargetText();
+    // _generateTargetText();
   }
 
   void _handleChangeLesson(LessonConfig lessonConfig) {
-    final settings = SystemService.settings.value.clone()
-      ..currentLesson = lessonConfig;
+    // final settings = _settings.clone()
+    //   ..currentLesson = lessonConfig;
 
-    SystemService.settings.value = settings;
+    // _settings = settings;
 
-    _generateTargetText();
+    // _generateTargetText();
   }
 
   void _handleChangeNumbers(bool value) {
-    final settings = SystemService.settings.value.clone()
-      ..useNumbers = value;
+    // final settings = _settings.clone()
+    //   ..useNumbers = value;
 
-    SystemService.settings.value = settings;
+    // _settings = settings;
 
-    _generateTargetText();
+    // _generateTargetText();
   }
 
   void _handleChangePunctuation(bool value) {
-    final settings = SystemService.settings.value.clone()
-      ..usePunctuation = value;
+    // final settings = _settings.clone()
+    //   ..usePunctuation = value;
 
-    SystemService.settings.value = settings;
+    // _settings = settings;
 
-    _generateTargetText();
+    // _generateTargetText();
   }
 
   void _handleChangeRepeatLetters(bool value) {
-    final settings = SystemService.settings.value.clone()
-      ..repeatLetter = value;
+    // final settings = _settings.clone()
+    //   ..repeatLetter = value;
 
-    SystemService.settings.value = settings;
+    // _settings = settings;
 
-    _generateTargetText();
+    // _generateTargetText();
   }
 
   void _handleChangeTextLength(int? length) {
@@ -98,12 +100,12 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       return;
     }
 
-    final settings = SystemService.settings.value.clone()
-      ..textLength = length;
+    // final settings = _settings.clone()
+    //   ..textLength = length;
 
-    SystemService.settings.value = settings;
+    // _settings = settings;
 
-    _generateTargetText();
+    // _generateTargetText();
   }
 
   @override
@@ -120,9 +122,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       ),
       width: 250,
       child: SingleChildScrollView(
-        child: ValueListenableBuilder(
-          valueListenable: SystemService.settings,
-          builder: (_, Settings settings, __) {
+        child: BlocBuilder<GameSettingsCubit, GameSettings>(
+          builder: (_, GameSettings settings) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

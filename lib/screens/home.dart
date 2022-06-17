@@ -8,11 +8,11 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/bloc/blocs.dart';
+import 'package:key_peer/bloc/cubits/keyboard_cubit.dart';
 import 'package:key_peer/keyboards/keyboard_en.dart';
 import 'package:key_peer/scoreboard.dart';
 import 'package:key_peer/settings_drawer.dart';
-import 'package:key_peer/state/blocs.dart';
-import 'package:key_peer/state/cubits/keyboard_cubic.dart';
 import 'package:key_peer/typed_text.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -57,7 +57,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
 
   @override
   void onWindowBlur() {
-    Blocs.get<KeyboardCubic>().addKeyEvent(null);
+    Blocs.get<KeyboardCubit>().addKeyEvent(null);
   }
 
   @override
@@ -91,7 +91,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
 
   KeyEventResult _onKey(_, RawKeyEvent event) {
     if(!_isDrawerOpen) {
-      Blocs.get<KeyboardCubic>().addKeyEvent(event);
+      Blocs.get<KeyboardCubit>().addKeyEvent(event);
     }
 
     return _isDrawerOpen
@@ -114,7 +114,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
           children: [
             GestureDetector(
               onTap: _handleCloseDrawer,
-              child: BlocBuilder<KeyboardCubic, RawKeyEvent?>(
+              child: BlocBuilder<KeyboardCubit, RawKeyEvent?>(
                 builder: (_, __) {
                   return Container(
                     color: Colors.transparent,

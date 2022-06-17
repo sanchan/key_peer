@@ -1,8 +1,66 @@
 import 'dart:math';
 
-import 'package:key_peer/state/models/game_settings.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/bloc/blocs.dart';
+import 'package:key_peer/bloc/cubits/game_settings_cubit.dart';
+import 'package:key_peer/utils/enums.dart';
+import 'package:key_peer/utils/types.dart';
+
+class TextCubit extends Cubit<TextCubitState> {
+  TextCubit() : super(TextCubitState());
+
+  TextGenerator get generator => state.generator;
+  List<TypedKeyStatus> get statuses => state.statuses;
+  // TODO Rename to 'text'
+  String get targetText => state.targetText;
+
+  void generateTargetText() {
+    final settings = Blocs.get<GameSettings>();
+
+    final targetText = state.generator.generateText(settings);
+    final statuses = state.targetText.split('').map((char) => TypedKeyStatus.none).toList();
+
+    emit(state.copyWith(
+      targetText: () => targetText,
+      statuses: () => statuses,
+    ));
+  }
+
+  void reset() => emit(TextCubitState());
+
+  void updateStatus(int index, TypedKeyStatus status) {
+    if(index < state.statuses.length) {
+      state.statuses[index] = status;
+    }
+  }
+}
+
+class TextCubitState {
+  TextCubitState({
+    this.generator = const TextGenerator(),
+    this.targetText = 'Keypeer',
+    this.statuses = const [],
+  });
+
+  final TextGenerator generator;
+  final List<TypedKeyStatus> statuses;
+  // TODO Rename to 'text'
+  final String targetText;
+
+  TextCubitState copyWith({
+    Copyable<TextGenerator>? generator,
+    Copyable<String>? targetText,
+    Copyable<List<TypedKeyStatus>>? statuses,
+  }) => TextCubitState(
+    generator: generator?.call() ?? this.generator,
+    targetText: targetText?.call() ?? this.targetText,
+    statuses: statuses?.call() ?? this.statuses,
+  );
+}
 
 class TextGenerator {
+  const TextGenerator();
+
   String generateText(GameSettings settings) {
     final random = Random();
     var text = '';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:key_peer/state/cubits/keyboard_cubic.dart';
-import 'package:key_peer/state/models/keyboard_key_info.dart';
+import 'package:key_peer/bloc/cubits/keyboard_config_cubit.dart';
+import 'package:key_peer/bloc/cubits/keyboard_cubit.dart';
 
 class KeyRenderer extends StatefulWidget {
   const KeyRenderer({
@@ -111,7 +111,7 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
 
-    return BlocListener<KeyboardCubic, RawKeyEvent?>(
+    return BlocListener<KeyboardCubit, RawKeyEvent?>(
       listener: _handleEventChange,
       child: AnimatedBuilder(
         animation: _animationController,

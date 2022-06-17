@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:key_peer/services/system_service.dart';
-import 'package:key_peer/state/cubits/keyboard_cubic.dart';
+import 'package:key_peer/bloc/blocs.dart';
+import 'package:key_peer/bloc/cubits/keyboard_cubit.dart';
+import 'package:key_peer/bloc/cubits/text_cubit.dart';
+import 'package:key_peer/utils/enums.dart';
 
 class TypedText extends StatefulWidget {
   const TypedText({
@@ -14,25 +16,10 @@ class TypedText extends StatefulWidget {
 }
 
 class _TypedTextState extends State<TypedText> {
-  @override
-  void dispose() {
-    super.dispose();
 
-    SystemService.targetText.removeListener(_handleTargetTextChange);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    _statuses = _targetText.characters.map((char) => TypedKeyStatus.none).toList();
-
-    SystemService.targetText.addListener(_handleTargetTextChange);
-  }
-
-  bool get _isLessonCompleted => SystemService.isLessonCompleted;
-  List<TypedKeyStatus> get _statuses => SystemService.statuses.value;
-  String get _targetText => SystemService.targetText.value;
+  bool get _isLessonCompleted => Blocs.get<GameStatus>() == GameStatus.completed;
+  List<TypedKeyStatus> get _statuses => Blocs.get<TextCubit>().statuses;
+  String get _targetText => Blocs.get<TextCubit>().targetText;
 
   int _cursorIndex = 0;
 
@@ -80,7 +67,7 @@ class _TypedTextState extends State<TypedText> {
     }
   }
 
-  void _handleTargetTextChange() {
+  void _handleTargetTextChange(BuildContext _, TextCubitState __) {
     setState(() {
       _cursorIndex = 0;
     });
@@ -102,9 +89,7 @@ class _TypedTextState extends State<TypedText> {
     }
   }
 
-  set _statuses(List<TypedKeyStatus> newStatuses) => SystemService.statuses.value = newStatuses;
-
-  void _updateStatus(int index, TypedKeyStatus status) => SystemService.updateStatus(index, status);
+  void _updateStatus(int index, TypedKeyStatus status) => Blocs.get<TextCubit>().updateStatus(index, status);
 
   Color _textColor(int index) {
     switch (_statuses[index]) {
@@ -125,39 +110,42 @@ class _TypedTextState extends State<TypedText> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<KeyboardCubic, RawKeyEvent?>(
-      listener: _handleEventChange,
-      builder: (_, __) {
-        final richCharacters = <TextSpan>[];
+    return BlocListener<TextCubit, TextCubitState>(
+      listener: _handleTargetTextChange,
+      child: BlocConsumer<KeyboardCubit, RawKeyEvent?>(
+        listener: _handleEventChange,
+        builder: (_, __) {
+          final richCharacters = <TextSpan>[];
 
-        for (var i = 0; i < _targetText.length; i++) {
-          final char = _targetText[i];
-            richCharacters.add(
-              TextSpan(
-                text: char == ' ' && (_statuses[i] == TypedKeyStatus.error || _statuses[i] == TypedKeyStatus.corrected)
-                  ? '•'
-                  : char,
-                style: TextStyle(
-                  backgroundColor: _cursorIndex == i && !_isLessonCompleted
-                    ? Colors.grey[300]
-                    : null,
-                  color: _textColor(i),
+          for (var i = 0; i < _targetText.length; i++) {
+            final char = _targetText[i];
+              richCharacters.add(
+                TextSpan(
+                  text: char == ' ' && (_statuses[i] == TypedKeyStatus.error || _statuses[i] == TypedKeyStatus.corrected)
+                    ? '•'
+                    : char,
+                  style: TextStyle(
+                    backgroundColor: _cursorIndex == i && !_isLessonCompleted
+                      ? Colors.grey[300]
+                      : null,
+                    color: _textColor(i),
+                  ),
                 ),
-              ),
-            );
-        }
+              );
+          }
 
-        return SizedBox(
-          width: 1040.0,
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              children: richCharacters,
-              style: const TextStyle(fontFamily: 'Courier New', fontSize: 24),
+          return SizedBox(
+            width: 1040.0,
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                children: richCharacters,
+                style: const TextStyle(fontFamily: 'Courier New', fontSize: 24),
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
