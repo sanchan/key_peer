@@ -16,8 +16,7 @@ class KeyRenderer extends StatefulWidget {
   State<KeyRenderer> createState() => _KeyRendererState();
 }
 
-class _KeyRendererState extends State<KeyRenderer>
-    with SingleTickerProviderStateMixin {
+class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/blocs/cubits/keyboard_cubic.dart';
 import 'package:key_peer/services/system_service.dart';
 import 'package:key_peer/utils/key_event_controller.dart';
 
@@ -17,7 +19,6 @@ class _TypedTextState extends State<TypedText> {
   void dispose() {
     super.dispose();
 
-    _keyEventController.removeListener(_handleEventChange);
     SystemService.targetText.removeListener(_handleTargetTextChange);
   }
 
@@ -27,23 +28,20 @@ class _TypedTextState extends State<TypedText> {
 
     _statuses = _targetText.characters.map((char) => TypedKeyStatus.none).toList();
 
-    _keyEventController.addListener(_handleEventChange);
+    // _keyEventController.addListener(_handleEventChange);
     SystemService.targetText.addListener(_handleTargetTextChange);
   }
 
   bool get _isLessonCompleted => SystemService.isLessonCompleted;
-  KeyEventController get _keyEventController => SystemService.keyEventController;
   List<TypedKeyStatus> get _statuses => SystemService.statuses.value;
   String get _targetText => SystemService.targetText.value;
 
   int _cursorIndex = 0;
 
-  void _handleEventChange() {
+  void _handleEventChange(BuildContext _, RawKeyEvent? event) {
     if(_isLessonCompleted) {
       return;
     }
-
-    final event = _keyEventController.event;
 
     if(event is RawKeyUpEvent || event?.character == null) {
       return;
@@ -99,11 +97,11 @@ class _TypedTextState extends State<TypedText> {
   }
 
   void _moveCursorRight() {
-    setState(() {
-      if(_cursorIndex < _targetText.length - 1) {
+    if(_cursorIndex < _targetText.length - 1) {
+      setState(() {
         _cursorIndex++;
-      }
-    });
+      });
+    }
   }
 
   set _statuses(List<TypedKeyStatus> newStatuses) => SystemService.statuses.value = newStatuses;
@@ -129,34 +127,39 @@ class _TypedTextState extends State<TypedText> {
 
   @override
   Widget build(BuildContext context) {
-    final richCharacters = <TextSpan>[];
+    return BlocConsumer<KeyboardCubic, RawKeyEvent?>(
+      listener: _handleEventChange,
+      builder: (_, __) {
+        final richCharacters = <TextSpan>[];
 
-    for (var i = 0; i < _targetText.length; i++) {
-      final char = _targetText[i];
-        richCharacters.add(
-          TextSpan(
-            text: char == ' ' && (_statuses[i] == TypedKeyStatus.error || _statuses[i] == TypedKeyStatus.corrected)
-              ? '•'
-              : char,
-            style: TextStyle(
-              backgroundColor: _cursorIndex == i && !_isLessonCompleted
-                ? Colors.grey[300]
-                : null,
-              color: _textColor(i),
+        for (var i = 0; i < _targetText.length; i++) {
+          final char = _targetText[i];
+            richCharacters.add(
+              TextSpan(
+                text: char == ' ' && (_statuses[i] == TypedKeyStatus.error || _statuses[i] == TypedKeyStatus.corrected)
+                  ? '•'
+                  : char,
+                style: TextStyle(
+                  backgroundColor: _cursorIndex == i && !_isLessonCompleted
+                    ? Colors.grey[300]
+                    : null,
+                  color: _textColor(i),
+                ),
+              ),
+            );
+        }
+
+        return SizedBox(
+          width: 1040.0,
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              children: richCharacters,
+              style: const TextStyle(fontFamily: 'Courier New', fontSize: 24),
             ),
           ),
         );
-    }
-
-    return SizedBox(
-      width: 1040.0,
-      child: RichText(
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          children: richCharacters,
-          style: const TextStyle(fontFamily: 'Courier New', fontSize: 24),
-        ),
-      ),
+      },
     );
   }
 }

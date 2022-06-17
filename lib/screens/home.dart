@@ -7,6 +7,8 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:key_peer/blocs/blocs.dart';
+import 'package:key_peer/blocs/cubits/keyboard_cubic.dart';
 import 'package:key_peer/keyboards/keyboard_en.dart';
 import 'package:key_peer/scoreboard.dart';
 import 'package:key_peer/services/system_service.dart';
@@ -80,8 +82,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
 
   KeyEventResult _onKey(_, RawKeyEvent event) {
     if(!_isDrawerOpen) {
-      SystemService.keyEventController.addEvent(event);
+      // SystemService.keyEventController.addEvent(event);
+      Blocs.get<KeyboardCubic>().addKeyEvent(event);
     }
+
 
     return _isDrawerOpen
       ? KeyEventResult.ignored

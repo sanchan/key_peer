@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
+import 'package:key_peer/blocs/blocs.dart';
 import 'package:key_peer/themed_cupertino_app.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -27,6 +28,8 @@ Future<void> main() async {
   await windowManager.center();
   await windowManager.show();
   await windowManager.setSkipTaskbar(false);
+
+  Blocs.setup();
 
   return runApp(const ThemedCupertinoApp());
 }

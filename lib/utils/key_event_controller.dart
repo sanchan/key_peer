@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+
+@Deprecated('Delete me, using Blocs')
 class KeyEventController extends ChangeNotifier {
   RawKeyEvent? event;
 

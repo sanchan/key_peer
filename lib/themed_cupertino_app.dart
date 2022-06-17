@@ -20,8 +20,6 @@ class ThemedCupertinoApp extends StatelessWidget {
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
     );
 
-    Blocs.setup();
-
     return MacosApp(
       title: 'KeyPeer',
       theme: MacosThemeData.dark(),
