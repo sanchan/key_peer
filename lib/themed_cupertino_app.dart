@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/blocs/blocs.dart';
+import 'package:key_peer/blocs/cubits/errors_cubic.dart';
+import 'package:key_peer/blocs/cubits/keyboard_config_cubic.dart';
+import 'package:key_peer/blocs/cubits/keyboard_cubic.dart';
+import 'package:key_peer/blocs/cubits/speedometer_cubic.dart';
 import 'package:key_peer/screens/home.dart';
 import 'package:macos_ui/macos_ui.dart';
 
@@ -14,13 +20,23 @@ class ThemedCupertinoApp extends StatelessWidget {
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
     );
 
+    Blocs.setup();
+
     return MacosApp(
       title: 'KeyPeer',
       theme: MacosThemeData.dark(),
       darkTheme: MacosThemeData.dark(),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
-      home: const Home(),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => Blocs.get<KeyboardConfigCubic>()),
+          BlocProvider(create: (_) => Blocs.get<KeyboardCubic>()),
+          BlocProvider(create: (_) => Blocs.get<SpeedometerCubic>()),
+          BlocProvider(create: (_) => Blocs.get<ErrorsCubic>()),
+        ],
+        child: const Home(),
+      ),
     );
   }
 }
