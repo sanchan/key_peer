@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:key_peer/models/lesson_config.dart';
-import 'package:key_peer/models/settings.dart';
 import 'package:key_peer/services/system_service.dart';
+import 'package:key_peer/state/blocs.dart';
+import 'package:key_peer/state/blocs/game_bloc/game_bloc.dart';
+import 'package:key_peer/state/models/lesson_config.dart';
 import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
 
@@ -44,7 +45,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
   ];
 
   void _generateTargetText() {
-    SystemService.generateTargetText();
+    Blocs.get<GameBloc>().generateTargetText();
   }
 
   void _handleChangeCapitalLetters(bool value) {

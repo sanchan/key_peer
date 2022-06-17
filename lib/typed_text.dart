@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:key_peer/blocs/cubits/keyboard_cubic.dart';
 import 'package:key_peer/services/system_service.dart';
+import 'package:key_peer/state/cubits/keyboard_cubic.dart';
 
 class TypedText extends StatefulWidget {
   const TypedText({
@@ -160,11 +160,4 @@ class _TypedTextState extends State<TypedText> {
       },
     );
   }
-}
-
-enum TypedKeyStatus {
-  none,
-  correct,
-  error,
-  corrected,
 }

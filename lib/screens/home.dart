@@ -8,12 +8,11 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:key_peer/blocs/blocs.dart';
-import 'package:key_peer/blocs/cubits/keyboard_cubic.dart';
 import 'package:key_peer/keyboards/keyboard_en.dart';
 import 'package:key_peer/scoreboard.dart';
-import 'package:key_peer/services/system_service.dart';
 import 'package:key_peer/settings_drawer.dart';
+import 'package:key_peer/state/blocs.dart';
+import 'package:key_peer/state/cubits/keyboard_cubic.dart';
 import 'package:key_peer/typed_text.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -27,6 +26,8 @@ class Home extends StatefulWidget {
 // ignore: prefer_mixin
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin, WindowListener {
   static const _kDrawerWidth = 250.0;
+
+  final _confettiController = ConfettiController(duration: const Duration(milliseconds: 1500));
 
   @override
   void dispose() {
@@ -44,7 +45,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
     _drawerAnimation = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 250),
-    )..value = 0.0;
+    );
   }
 
   @override
@@ -191,7 +192,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
             Align(
               alignment: Alignment.topCenter,
               child: ConfettiWidget(
-                confettiController: SystemService.confettiController,
+                confettiController: _confettiController,
                 blastDirection: pi / 2,
                 blastDirectionality: BlastDirectionality.explosive,
                 minBlastForce: 50,
