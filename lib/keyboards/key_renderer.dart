@@ -23,8 +23,9 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
-    )..value = 1.0;
+      duration: const Duration(milliseconds: 60),
+      reverseDuration: const Duration(milliseconds: 200),
+    );
   }
 
   String get _keyLabel => _logicalKey.keyLabel;
@@ -92,12 +93,18 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
   late AnimationController _animationController;
 
   void _handleEventChange(BuildContext _, RawKeyEvent? event) {
-    if (event?.logicalKey == _logicalKey) {
-      if (event is RawKeyDownEvent) {
-        _animationController.reset();
-      } else if (event is RawKeyUpEvent) {
-        _animationController.forward().orCancel;
-      }
+    switch (event.runtimeType) {
+      case RawKeyDownEvent:
+        if (event?.logicalKey == _logicalKey) {
+         _animationController.forward().ignore();
+
+        }
+        break;
+      case Null:
+      case RawKeyUpEvent:
+        _animationController.reverse().ignore();
+        break;
+      default:
     }
   }
 
@@ -110,9 +117,8 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
         animation: _animationController,
         builder: (_, __) {
           final color = ColorTween(
-            begin: Colors.blue,
-            end: Colors.grey[900]?.withOpacity(0.5),
-            // end: Colors.transparent
+            begin: Colors.grey[900]?.withOpacity(0.5),
+            end: Colors.blue,
           ).animate(_animationController);
 
           return Container(

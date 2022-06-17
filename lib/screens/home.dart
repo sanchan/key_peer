@@ -55,6 +55,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
   }
 
   @override
+  void onWindowBlur() {
+    Blocs.get<KeyboardCubic>().addKeyEvent(null);
+  }
+
+  @override
   Future<void> onWindowLeaveFullScreen() async {
     setState(() {
       _isFullscreen = false;
