@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:key_peer/services/system_service.dart';
-import 'package:key_peer/utils/key_event_controller.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/blocs/cubits/keyboard_cubic.dart';
 import 'package:key_peer/utils/keyboard_config/keyboard_key_info.dart';
 
 class KeyRenderer extends StatefulWidget {
@@ -18,17 +18,8 @@ class KeyRenderer extends StatefulWidget {
 
 class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStateMixin {
   @override
-  void dispose() {
-    super.dispose();
-
-    _eventController.removeListener(_handleEventChange);
-  }
-
-  @override
   void initState() {
     super.initState();
-
-    _eventController.addListener(_handleEventChange);
 
     _animationController = AnimationController(
       vsync: this,
@@ -36,7 +27,6 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
     )..value = 1.0;
   }
 
-  KeyEventController get _eventController => SystemService.keyEventController;
   String get _keyLabel => _logicalKey.keyLabel;
   Size get _keySize => widget.keyInfo.size;
   AlignmentGeometry get _keyTextAlignment {
@@ -101,9 +91,7 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
 
   late AnimationController _animationController;
 
-  void _handleEventChange() {
-    final event = _eventController.event;
-
+  void _handleEventChange(BuildContext _, RawKeyEvent? event) {
     if (event?.logicalKey == _logicalKey) {
       if (event is RawKeyDownEvent) {
         _animationController.reset();
@@ -115,35 +103,39 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (_, __) {
-        final color = ColorTween(
-          begin: Colors.blue,
-          end: Colors.grey[900]?.withOpacity(0.5),
-          // end: Colors.transparent
-        ).animate(_animationController);
 
-        return Container(
-          height: _keySize.height,
-          width: _keySize.width,
-          padding: const EdgeInsets.all(5.0),
-          decoration: BoxDecoration(
-            color: color.value,
-            border: Border.all(
-              color: Colors.white,
+    return BlocListener<KeyboardCubic, RawKeyEvent?>(
+      listener: _handleEventChange,
+      child: AnimatedBuilder(
+        animation: _animationController,
+        builder: (_, __) {
+          final color = ColorTween(
+            begin: Colors.blue,
+            end: Colors.grey[900]?.withOpacity(0.5),
+            // end: Colors.transparent
+          ).animate(_animationController);
+
+          return Container(
+            height: _keySize.height,
+            width: _keySize.width,
+            padding: const EdgeInsets.all(5.0),
+            decoration: BoxDecoration(
+              color: color.value,
+              border: Border.all(
+                color: Colors.white,
+              ),
+              borderRadius: BorderRadius.circular(6.0),
             ),
-            borderRadius: BorderRadius.circular(6.0),
-          ),
-          child: Align(
-            alignment: _keyTextAlignment,
-            child: Text(
-              _text,
-              style: TextStyle(fontSize: fontSize, color: Colors.white),
+            child: Align(
+              alignment: _keyTextAlignment,
+              child: Text(
+                _text,
+                style: TextStyle(fontSize: fontSize, color: Colors.white),
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

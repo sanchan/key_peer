@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/blocs/cubits/keyboard_cubic.dart';
 import 'package:key_peer/services/system_service.dart';
-import 'package:key_peer/utils/key_event_controller.dart';
 
 class TypedText extends StatefulWidget {
   const TypedText({
@@ -28,7 +27,6 @@ class _TypedTextState extends State<TypedText> {
 
     _statuses = _targetText.characters.map((char) => TypedKeyStatus.none).toList();
 
-    // _keyEventController.addListener(_handleEventChange);
     SystemService.targetText.addListener(_handleTargetTextChange);
   }
 

@@ -6,13 +6,11 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:key_peer/models/settings.dart';
 import 'package:key_peer/typed_text.dart';
-import 'package:key_peer/utils/key_event_controller.dart';
 import 'package:key_peer/utils/keyboard_config/keyboard_config.dart';
 
 
 class SystemService {
   static final ConfettiController confettiController = ConfettiController(duration: const Duration(milliseconds: 1500));
-  static final KeyEventController keyEventController = KeyEventController();
   static final ValueNotifier<KeyboardConfig> keyboardConfig = ValueNotifier(KeyboardConfig.forLang());
   static final Stopwatch lessonClock = Stopwatch();
   // Settings

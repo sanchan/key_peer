@@ -7,6 +7,7 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/blocs/blocs.dart';
 import 'package:key_peer/blocs/cubits/keyboard_cubic.dart';
 import 'package:key_peer/keyboards/keyboard_en.dart';
@@ -25,6 +26,8 @@ class Home extends StatefulWidget {
 
 // ignore: prefer_mixin
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin, WindowListener {
+  static const _kDrawerWidth = 250.0;
+
   @override
   void dispose() {
     windowManager.removeListener(this);
@@ -82,10 +85,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
 
   KeyEventResult _onKey(_, RawKeyEvent event) {
     if(!_isDrawerOpen) {
-      // SystemService.keyEventController.addEvent(event);
       Blocs.get<KeyboardCubic>().addKeyEvent(event);
     }
-
 
     return _isDrawerOpen
       ? KeyEventResult.ignored
@@ -107,9 +108,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
           children: [
             GestureDetector(
               onTap: _handleCloseDrawer,
-              child: AnimatedBuilder(
-                animation: SystemService.keyEventController,
-                builder: (BuildContext context, Widget? child) {
+              child: BlocBuilder<KeyboardCubic, RawKeyEvent?>(
+                builder: (_, __) {
                   return Container(
                     color: Colors.transparent,
                     child: Column(
@@ -167,7 +167,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
               builder: (_, __) {
                 final offset = Tween<Offset>(
                   begin: const Offset(0,0),
-                  end: const Offset(250, 0),
+                  end: const Offset(_kDrawerWidth, 0),
                 ).animate(
                   CurvedAnimation(
                     parent: _drawerAnimation,
@@ -176,7 +176,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
                 );
 
                 return Positioned(
-                  right: -250 + offset.value.dx,
+                  right: -_kDrawerWidth + offset.value.dx,
                   height: MediaQuery.of(context).size.height,
                   child: const SettingsDrawer(),
                 );
