@@ -1,11 +1,11 @@
 import 'dart:math';
 
-import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
+import 'package:flutter/material.dart';
 
 class TextGenerator {
   const TextGenerator();
 
-  String generateText(GameSettings settings) {
+  String generate(TextGeneratorSettings settings) {
     final random = Random();
     var text = '';
 
@@ -13,7 +13,7 @@ class TextGenerator {
       final word = _generateWord(
         settings.useNumbers && random.nextInt(100) < _numbersPercentage
           ? ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
-          : settings.currentLesson?.characters ?? 'monkey'.split(''),
+          : settings.characters,
         !settings.repeatLetter,
       );
 
@@ -82,4 +82,23 @@ class TextGenerator {
 
     return word;
   }
+}
+
+@immutable
+class TextGeneratorSettings {
+  const TextGeneratorSettings({
+    this.characters = const [],
+    this.repeatLetter = false,
+    this.useCapitalLetters = false,
+    this.useNumbers = false,
+    this.usePunctuation = false,
+    this.textLength = 25,
+  });
+
+  final List<String> characters;
+  final bool repeatLetter;
+  final int textLength;
+  final bool useCapitalLetters;
+  final bool useNumbers;
+  final bool usePunctuation;
 }

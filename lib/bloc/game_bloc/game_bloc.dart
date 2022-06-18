@@ -153,50 +153,21 @@ class GameState {
 class GameSettings {
   const GameSettings({
     this.textGenerator = const TextGenerator(),
-    this.currentLesson,
-    this.repeatLetter = false,
-    this.useCapitalLetters = false,
-    this.useNumbers = false,
-    this.usePunctuation = false,
-    this.textLength = 25,
+    this.textGeneratorSettings = const TextGeneratorSettings(),
     this.maxErrors = 10,
   });
 
-  final LessonConfig? currentLesson;
-  final int maxErrors;
-  final bool repeatLetter;
   final TextGenerator textGenerator;
-  final int textLength;
-  final bool useCapitalLetters;
-  final bool useNumbers;
-  final bool usePunctuation;
+  final TextGeneratorSettings textGeneratorSettings;
+  final int maxErrors;
 
   GameSettings copyWith({
-    Copyable<LessonConfig>? currentLesson,
+    Copyable<TextGenerator>? textGenerator,
+    Copyable<TextGeneratorSettings>? textGeneratorSettings,
     Copyable<int>? maxErrors,
-    Copyable<bool>? repeatLetter,
-    Copyable<int>? textLength,
-    Copyable<bool>? useCapitalLetters,
-    Copyable<bool>? useNumbers,
-    Copyable<bool>? usePunctuation,
   }) => GameSettings(
-    currentLesson: currentLesson?.call() ?? this.currentLesson,
-    repeatLetter: repeatLetter?.call() ?? this.repeatLetter,
-    useCapitalLetters: useCapitalLetters?.call() ?? this.useCapitalLetters,
-    useNumbers: useNumbers?.call() ?? this.useNumbers,
-    usePunctuation: usePunctuation?.call() ?? this.usePunctuation,
-    textLength: textLength?.call() ?? this.textLength,
+    textGenerator: textGenerator?.call() ?? this.textGenerator,
+    textGeneratorSettings: textGeneratorSettings?.call() ?? this.textGeneratorSettings,
     maxErrors: maxErrors?.call() ?? this.maxErrors,
   );
-}
-
-@immutable
-class LessonConfig {
-  const LessonConfig({
-    required this.id,
-    required this.characters,
-  });
-
-  final List<String> characters;
-  final int id;
 }

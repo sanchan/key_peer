@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
+import 'package:key_peer/models/text_generator.dart';
 import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
 
@@ -16,34 +17,35 @@ class SettingsDrawer extends StatefulWidget {
 }
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
-  GameSettings get _settings => Blocs.get<GameSettings>();
 
-  final List<LessonConfig> _lessons = [
-    const LessonConfig(
-      id: 1,
-      characters: ['e', 't', 'a', 'o'],
-    ),
-    const LessonConfig(
-      id: 2,
-      characters: ['n', 'i', 'h', 's', 'r'],
-    ),
-    const LessonConfig(
-      id: 3,
-      characters: ['d', 'l', 'u', 'm'],
-    ),
-    const LessonConfig(
-      id: 4,
-      characters: ['w', 'c', 'g', 'f'],
-    ),
-    const LessonConfig(
-      id: 5,
-      characters: ['y', 'p', 'b', 'v', 'k'],
-    ),
-    const LessonConfig(
-      id: 6,
-      characters: ["'", 'j', 'x', 'q', 'z'],
-    ),
-  ];
+  final List _lessons = [];
+
+  // final List<LessonConfig> _lessons = [
+  //   const LessonConfig(
+  //     id: 1,
+  //     characters: ['e', 't', 'a', 'o'],
+  //   ),
+  //   const LessonConfig(
+  //     id: 2,
+  //     characters: ['n', 'i', 'h', 's', 'r'],
+  //   ),
+  //   const LessonConfig(
+  //     id: 3,
+  //     characters: ['d', 'l', 'u', 'm'],
+  //   ),
+  //   const LessonConfig(
+  //     id: 4,
+  //     characters: ['w', 'c', 'g', 'f'],
+  //   ),
+  //   const LessonConfig(
+  //     id: 5,
+  //     characters: ['y', 'p', 'b', 'v', 'k'],
+  //   ),
+  //   const LessonConfig(
+  //     id: 6,
+  //     characters: ["'", 'j', 'x', 'q', 'z'],
+  //   ),
+  // ];
 
   void _generateTargetText() {
     Blocs.get<GameBloc>().generateText();
@@ -58,7 +60,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     // _generateTargetText();
   }
 
-  void _handleChangeLesson(LessonConfig lessonConfig) {
+  void _handleChangeLesson(List<String> characters) {
     // final settings = _settings.clone()
     //   ..currentLesson = lessonConfig;
 
@@ -121,9 +123,9 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       ),
       width: 250,
       child: SingleChildScrollView(
-        child: BlocSelector<GameBloc, GameState, GameSettings>(
-          selector: (state) => state.gameSettings,
-          builder: (_, GameSettings settings) {
+        child: BlocSelector<GameBloc, GameState, TextGeneratorSettings>(
+          selector: (state) => state.gameSettings.textGeneratorSettings,
+          builder: (_, TextGeneratorSettings settings) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -139,7 +141,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Lesson ${lesson.key + 1}: ${lesson.value.characters.join(' ')}'),
-                            if(settings.currentLesson?.id == lesson.value.id)
+                            // if(settings.currentLesson?.id == lesson.value.id)
                             const MacosIcon(CupertinoIcons.check_mark, size: 16,),
                           ],
                         ),
