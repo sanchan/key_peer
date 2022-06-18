@@ -5,16 +5,15 @@ import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/bloc/cubits/game_settings_cubit.dart';
 import 'package:key_peer/bloc/game_bloc/events/game_bloc_event.dart';
 import 'package:key_peer/bloc/game_bloc/events/game_settings_event/set_text_event.dart';
+import 'package:key_peer/bloc/game_bloc/events/game_status_event/set_game_status_event.dart';
 import 'package:key_peer/models/text_generator.dart';
 import 'package:key_peer/utils/enums.dart';
 import 'package:key_peer/utils/types.dart';
 
 class GameBloc extends Bloc<GameBlocEvent, GameState> {
   GameBloc() : super(const GameState()) {
-    on<SetTextEvent>((event, emit) => emit(state.copyWith(
-      targetText: () => event.text,
-      statuses: () => event.text.split('').map((char) => TypedKeyStatus.none).toList(),
-    )));
+    on<SetTextEvent>(_handleSetText);
+    on<SetGameStatusEvent>(_handleSetGameStatus);
   }
 
   // TODO Move GameSettings to here
@@ -22,6 +21,16 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
   List<TypedKeyStatus> get statuses => state.statuses;
   String get targetText => state.targetText;
   TextGenerator get textGenerator => _settings.textGenerator;
+
+  void _handleSetText(SetTextEvent event, Emitter<GameState> emit) => emit(state.copyWith(
+    targetText: () => event.text,
+    statuses: () => event.text.split('').map((char) => TypedKeyStatus.none).toList(),
+    cursorPosition: () => 0,
+  ));
+
+  void _handleSetGameStatus(SetGameStatusEvent event, Emitter<GameState> emit) => emit(state.copyWith(
+    gameStatus: () => event.gameStatus,
+  ));
 }
 
 extension GameBlocEmitters on GameBloc {
@@ -29,14 +38,8 @@ extension GameBlocEmitters on GameBloc {
     add(SetTextEvent(text: text));
   }
 
-  void generateTargetText() {
-    final targetText = textGenerator.generateText(_settings);
-    final statuses = targetText.split('').map((char) => TypedKeyStatus.none).toList();
-
-    emit(state.copyWith(
-      targetText: () => targetText,
-      statuses: () => statuses,
-    ));
+  void generateText() {
+    setText(textGenerator.generateText(_settings));
   }
 
   void setStatus(GameStatus status) => emit(state.copyWith(

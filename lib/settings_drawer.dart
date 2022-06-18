@@ -47,7 +47,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
   GameSettings get _settings => Blocs.get<GameSettings>();
 
   void _generateTargetText() {
-    Blocs.get<GameBloc>().generateTargetText();
+    Blocs.get<GameBloc>().generateText();
   }
 
   void _handleChangeCapitalLetters(bool value) {
