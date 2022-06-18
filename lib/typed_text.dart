@@ -14,11 +14,10 @@ class TypedText extends StatefulWidget {
 }
 
 class _TypedTextState extends State<TypedText> {
-
+  int get _cursorIndex => Blocs.get<GameBloc>().state.cursorPosition;
   bool get _isLessonCompleted => Blocs.get<GameBloc>().state.gameStatus == GameStatus.completed;
   List<TypedKeyStatus> get _statuses => Blocs.get<GameBloc>().statuses;
   String get _targetText => Blocs.get<GameBloc>().targetText;
-  int get _cursorIndex => Blocs.get<GameBloc>().state.cursorPosition;
 
   Color _textColor(int index) {
     switch (_statuses[index]) {

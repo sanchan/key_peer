@@ -16,6 +16,8 @@ class SettingsDrawer extends StatefulWidget {
 }
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
+  GameSettings get _settings => Blocs.get<GameSettings>();
+
   final List<LessonConfig> _lessons = [
     const LessonConfig(
       id: 1,
@@ -42,8 +44,6 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       characters: ["'", 'j', 'x', 'q', 'z'],
     ),
   ];
-
-  GameSettings get _settings => Blocs.get<GameSettings>();
 
   void _generateTargetText() {
     Blocs.get<GameBloc>().generateText();

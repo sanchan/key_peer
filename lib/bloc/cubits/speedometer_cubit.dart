@@ -16,8 +16,8 @@ class SpeedometerState {
     this.label = 'chars/min',
   });
 
-  final int value;
   final String label;
+  final int value;
 
   SpeedometerState copyWith({
     int? value,

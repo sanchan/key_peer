@@ -6,8 +6,6 @@ import 'package:key_peer/bloc/cubits/speedometer_cubit.dart';
 import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 
 class Blocs {
-  static final _getIt = GetIt.instance;
-
   static T get<T extends Object>() => _getIt.get<T>();
 
   static void setup() {
@@ -17,4 +15,6 @@ class Blocs {
       ..registerSingleton(ErrorsCubit())
       ..registerSingleton(SpeedometerCubit());
   }
+
+  static final _getIt = GetIt.instance;
 }
