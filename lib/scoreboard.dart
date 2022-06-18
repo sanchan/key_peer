@@ -18,10 +18,10 @@ class Scoreboard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           BlocSelector<ScoreboardCubit, ScoreboardState, int>(
-            selector: (state) => state.speed,
-            builder: (context, speed) => ScoreboardItem(
+            selector: (state) => state.typedCharacters,
+            builder: (context, typedCharacters) => ScoreboardItem(
               icon: CupertinoIcons.speedometer,
-              value: speed.toString(),
+              value: typedCharacters.toString(),
               caption: 'char/min',
             ),
           ),

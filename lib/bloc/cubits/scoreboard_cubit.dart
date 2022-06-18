@@ -13,6 +13,7 @@ class ScoreboardCubit extends Cubit<ScoreboardState> {
 
   void setSpeed(int speed) => emit(state.copyWith(speed: () => speed));
   void setAccuracy(int accuracy) => emit(state.copyWith(accuracy: () => accuracy));
+  void incrementTypedCharacters() => emit(state.copyWith(typedCharacters: () => state.typedCharacters + 1));
   void incrementErrors() {
     final errors = state.errors + 1;
     final accuracy = max((_totalCharacters - errors) / _totalCharacters * 100, 0).round();
@@ -34,6 +35,7 @@ class ScoreboardState {
     this.accuracy = 100,
     this.errorsLabel = 'errors',
     this.errors = 0,
+    this.typedCharacters = 0,
   });
 
   final String speedLabel;
@@ -42,6 +44,7 @@ class ScoreboardState {
   final int accuracy;
   final String errorsLabel;
   final int errors;
+  final int typedCharacters;
 
   ScoreboardState copyWith({
     Copyable<String>? speedLabel,
@@ -50,6 +53,7 @@ class ScoreboardState {
     Copyable<int>? accuracy,
     Copyable<String>? errorsLabel,
     Copyable<int>? errors,
+    Copyable<int>? typedCharacters,
   })  => ScoreboardState(
     speedLabel: speedLabel?.call() ?? this.speedLabel,
     speed: speed?.call() ?? this.speed,
@@ -57,5 +61,6 @@ class ScoreboardState {
     accuracy: accuracy?.call() ?? this.accuracy,
     errorsLabel: errorsLabel?.call() ?? this.errorsLabel,
     errors: errors?.call() ?? this.errors,
+    typedCharacters: typedCharacters?.call() ?? this.typedCharacters,
   );
 }

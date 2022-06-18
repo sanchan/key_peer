@@ -54,16 +54,17 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
       ));
     }
 
+    /// If keyEvent doesn't carry a character, there's nothing else we need to do with it
+    if(keyEvent.character == null) {
+      return;
+    }
+
+    /// We know the key is a character, so we increment the total number of typed characters
+    Blocs.get<ScoreboardCubit>().incrementTypedCharacters();
+
     /// Update characters status based on the keyEvent we recieved.
     final statuses = List.of(state.statuses);
-    final modifiers = keyEvent.data.modifiersPressed;
-    final keyLabel =
-      modifiers.containsKey(ModifierKey.shiftModifier) ||
-      modifiers.containsKey(ModifierKey.capsLockModifier)
-        ? keyEvent.logicalKey.keyLabel.toUpperCase()
-        : keyEvent.logicalKey.keyLabel.toLowerCase();
-
-    if(keyLabel == currentText[cursorPosition]) {
+    if(keyEvent.character == currentText[cursorPosition]) {
       if(
         statuses[cursorPosition] == TypedKeyStatus.none ||
         statuses[cursorPosition] == TypedKeyStatus.correct
