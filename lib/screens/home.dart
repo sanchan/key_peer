@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/bloc/cubits/keyboard_cubit.dart';
+import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 import 'package:key_peer/keyboards/keyboard_en.dart';
 import 'package:key_peer/scoreboard.dart';
 import 'package:key_peer/settings_drawer.dart';
@@ -46,6 +47,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
       vsync: this,
       duration: const Duration(milliseconds: 250),
     );
+
+    // Blocs.get<TextCubit>().generateTargetText();
+    Blocs.get<GameBloc>().setText('monkey11');
   }
 
   @override

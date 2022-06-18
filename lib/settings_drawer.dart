@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/bloc/cubits/game_settings_cubit.dart';
-import 'package:key_peer/bloc/cubits/text_cubit.dart';
+import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
 
@@ -47,7 +47,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
   GameSettings get _settings => Blocs.get<GameSettings>();
 
   void _generateTargetText() {
-    Blocs.get<TextCubit>().generateTargetText();
+    Blocs.get<GameBloc>().generateTargetText();
   }
 
   void _handleChangeCapitalLetters(bool value) {

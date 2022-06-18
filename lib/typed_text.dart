@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
-import 'package:key_peer/bloc/cubits/game_status_cubit.dart';
 import 'package:key_peer/bloc/cubits/keyboard_cubit.dart';
-import 'package:key_peer/bloc/cubits/text_cubit.dart';
+import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 import 'package:key_peer/utils/enums.dart';
 
 class TypedText extends StatefulWidget {
@@ -18,18 +17,13 @@ class TypedText extends StatefulWidget {
 
 class _TypedTextState extends State<TypedText> {
 
-  bool get _isLessonCompleted => Blocs.get<GameStatusCubit>().state == GameStatus.completed;
-  List<TypedKeyStatus> get _statuses => Blocs.get<TextCubit>().statuses;
-  String get _targetText => Blocs.get<TextCubit>().targetText;
-
-  int _cursorIndex = 0;
+  bool get _isLessonCompleted => Blocs.get<GameBloc>().state.gameStatus == GameStatus.completed;
+  List<TypedKeyStatus> get _statuses => Blocs.get<GameBloc>().statuses;
+  String get _targetText => Blocs.get<GameBloc>().targetText;
+  int get _cursorIndex => Blocs.get<GameBloc>().state.cursorPosition;
 
   void _handleEventChange(BuildContext _, RawKeyEvent? event) {
-    if(_isLessonCompleted) {
-      return;
-    }
-
-    if(event is RawKeyUpEvent || event?.character == null) {
+    if(_targetText.isEmpty || _isLessonCompleted || event is RawKeyUpEvent || event?.character == null  ) {
       return;
     }
 
@@ -68,29 +62,24 @@ class _TypedTextState extends State<TypedText> {
     }
   }
 
-  void _handleTargetTextChange(BuildContext _, TextCubitState __) {
-    setState(() {
-      _cursorIndex = 0;
-    });
-  }
-
   void _moveCursorLeft() {
-    setState(() {
-      if(_cursorIndex > 0) {
-        _cursorIndex--;
-      }
-    });
+    // setState(() {
+    //   if(_cursorIndex > 0) {
+    //     _cursorIndex--;
+    //   }
+    // });
   }
 
   void _moveCursorRight() {
-    if(_cursorIndex < _targetText.length - 1) {
-      setState(() {
-        _cursorIndex++;
-      });
-    }
+    // if(_cursorIndex < _targetText.length - 1) {
+    //   setState(() {
+    //     _cursorIndex++;
+    //     print('_cursorIndex $_cursorIndex');
+    //   });
+    // }
   }
 
-  void _updateStatus(int index, TypedKeyStatus status) => Blocs.get<TextCubit>().updateStatus(index, status);
+  void _updateStatus(int index, TypedKeyStatus status) => Blocs.get<GameBloc>().updateStatus(index, status);
 
   Color _textColor(int index) {
     switch (_statuses[index]) {
@@ -111,28 +100,27 @@ class _TypedTextState extends State<TypedText> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TextCubit, TextCubitState>(
-      listener: _handleTargetTextChange,
-      child: BlocConsumer<KeyboardCubit, RawKeyEvent?>(
+    return BlocBuilder<GameBloc, GameState>(
+      builder: (context, state) => BlocConsumer<KeyboardCubit, RawKeyEvent?>(
         listener: _handleEventChange,
         builder: (_, __) {
           final richCharacters = <TextSpan>[];
 
           for (var i = 0; i < _targetText.length; i++) {
             final char = _targetText[i];
-              richCharacters.add(
-                TextSpan(
-                  text: char == ' ' && (_statuses[i] == TypedKeyStatus.error || _statuses[i] == TypedKeyStatus.corrected)
-                    ? '•'
-                    : char,
-                  style: TextStyle(
-                    backgroundColor: _cursorIndex == i && !_isLessonCompleted
-                      ? Colors.grey[300]
-                      : null,
-                    color: _textColor(i),
-                  ),
+            richCharacters.add(
+              TextSpan(
+                text: char == ' ' && (_statuses[i] == TypedKeyStatus.error || _statuses[i] == TypedKeyStatus.corrected)
+                  ? '•'
+                  : char,
+                style: TextStyle(
+                  backgroundColor: _cursorIndex == i && !_isLessonCompleted
+                    ? Colors.grey[300]
+                    : null,
+                  color: _textColor(i),
                 ),
-              );
+              ),
+            );
           }
 
           return SizedBox(

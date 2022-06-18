@@ -57,7 +57,7 @@ class TextGenerator {
     }
 
     // Make sure we don't exceed the max length defined by the user
-    return text.trim().substring(0, settings.textLength).trim();
+    return text.trim().substring(0, settings.textLength - 1).trim();
   }
 
   final int _capitalsPercentage = 20;
