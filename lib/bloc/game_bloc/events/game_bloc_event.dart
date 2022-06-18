@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
 
 @immutable
-abstract class GameBlocEvent {
-
-}
+abstract class GameBlocEvent {}

@@ -61,7 +61,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
 
   @override
   void onWindowBlur() {
-    Blocs.get<KeyboardCubit>().addKeyEvent(null);
+    Blocs.get<GameBloc>().addKeyEvent(null);
   }
 
   @override
@@ -95,7 +95,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
 
   KeyEventResult _onKey(_, RawKeyEvent event) {
     if(!_isDrawerOpen) {
-      Blocs.get<KeyboardCubit>().addKeyEvent(event);
+      Blocs.get<GameBloc>().addKeyEvent(event);
     }
 
     return _isDrawerOpen

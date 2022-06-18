@@ -50,12 +50,12 @@ class _TypedTextState extends State<TypedText> {
           _statuses[_cursorIndex] == TypedKeyStatus.none ||
           _statuses[_cursorIndex] == TypedKeyStatus.correct
         ) {
-          _updateStatus(_cursorIndex, TypedKeyStatus.correct);
+          _updateCharStatus(_cursorIndex, TypedKeyStatus.correct);
         } else {
-          _updateStatus(_cursorIndex, TypedKeyStatus.corrected);
+          _updateCharStatus(_cursorIndex, TypedKeyStatus.corrected);
         }
       } else {
-        _updateStatus(_cursorIndex, TypedKeyStatus.error);
+        _updateCharStatus(_cursorIndex, TypedKeyStatus.error);
       }
 
       _moveCursorRight();
@@ -79,7 +79,7 @@ class _TypedTextState extends State<TypedText> {
     // }
   }
 
-  void _updateStatus(int index, TypedKeyStatus status) => Blocs.get<GameBloc>().updateStatus(index, status);
+  void _updateCharStatus(int index, TypedKeyStatus status) => Blocs.get<GameBloc>().updateCharStatus(index, status);
 
   Color _textColor(int index) {
     switch (_statuses[index]) {
