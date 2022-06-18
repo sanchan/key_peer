@@ -14,6 +14,7 @@ import 'package:key_peer/keyboards/keyboard_en.dart';
 import 'package:key_peer/scoreboard.dart';
 import 'package:key_peer/settings_drawer.dart';
 import 'package:key_peer/typed_text.dart';
+import 'package:key_peer/utils/enums.dart';
 import 'package:window_manager/window_manager.dart';
 
 class Home extends StatefulWidget {
@@ -25,10 +26,6 @@ class Home extends StatefulWidget {
 
 // ignore: prefer_mixin
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin, WindowListener {
-  static const _kDrawerWidth = 250.0;
-
-  final _confettiController = ConfettiController(duration: const Duration(milliseconds: 1500));
-
   @override
   void dispose() {
     windowManager.removeListener(this);
@@ -52,15 +49,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
   }
 
   @override
+  void onWindowBlur() {
+    Blocs.get<GameBloc>().addKeyEvent(null);
+  }
+
+  @override
   Future<void> onWindowEnterFullScreen() async {
     setState(() {
       _isFullscreen = true;
     });
-  }
-
-  @override
-  void onWindowBlur() {
-    Blocs.get<GameBloc>().addKeyEvent(null);
   }
 
   @override
@@ -70,16 +67,25 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
     });
   }
 
+  final _confettiController = ConfettiController(duration: const Duration(milliseconds: 1500));
   late AnimationController _drawerAnimation;
   final FocusNode _focusMainNode = FocusNode();
   final FocusNode _focusSettingsNode = FocusNode();
   bool _isDrawerOpen = false;
   bool _isFullscreen = false;
 
+  static const _kDrawerWidth = 250.0;
+
   void _handleCloseDrawer() {
     _drawerAnimation.reverse().orCancel;
     _isDrawerOpen = false;
     FocusScope.of(context).requestFocus(_focusMainNode);
+  }
+
+  void _handleLessonCompletionChanged(BuildContext _, GameState state) {
+    if(state.gameStatus == GameStatus.completed) {
+      _confettiController.play();
+    }
   }
 
   void _handleToggleDrawer() {
@@ -192,17 +198,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
               },
             ),
 
-            Align(
-              alignment: Alignment.topCenter,
-              child: ConfettiWidget(
-                confettiController: _confettiController,
-                blastDirection: pi / 2,
-                blastDirectionality: BlastDirectionality.explosive,
-                minBlastForce: 50,
-                maxBlastForce: 100,
-                emissionFrequency: 0.01,
-                numberOfParticles: 50,
-                gravity: 0.7,
+            BlocListener<GameBloc, GameState>(
+              listener: _handleLessonCompletionChanged,
+              listenWhen: (previous, current) => previous.gameStatus != current.gameStatus,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirection: pi / 2,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  minBlastForce: 50,
+                  maxBlastForce: 100,
+                  emissionFrequency: 0.01,
+                  numberOfParticles: 50,
+                  gravity: 0.7,
+                ),
               ),
             ),
           ],
