@@ -12,10 +12,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 import 'package:key_peer/keyboards/keyboard_en.dart';
-import 'package:key_peer/scoreboard.dart';
-import 'package:key_peer/settings_drawer.dart';
-import 'package:key_peer/typed_text.dart';
 import 'package:key_peer/utils/enums.dart';
+import 'package:key_peer/widgets/scoreboard.dart';
+import 'package:key_peer/widgets/settings_drawer.dart';
+import 'package:key_peer/widgets/typed_text.dart';
 import 'package:window_manager/window_manager.dart';
 
 class Home extends StatefulWidget {
@@ -67,20 +67,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
     });
   }
 
-  final _confettiController = ConfettiController(duration: const Duration(milliseconds: 1500));
-  late AnimationController _drawerAnimation;
+  final ConfettiController _confettiController = ConfettiController(duration: const Duration(milliseconds: 1500));
+  late final AnimationController _drawerAnimation;
   final FocusNode _focusMainNode = FocusNode();
   final FocusNode _focusSettingsNode = FocusNode();
   bool _isDrawerOpen = false;
   bool _isFullscreen = false;
 
   static const _kDrawerWidth = 250.0;
-
-  void _handleOpenDrawer() {
-    _drawerAnimation.forward().orCancel;
-    _isDrawerOpen = true;
-    FocusScope.of(context).requestFocus(_focusSettingsNode);
-  }
 
   void _handleCloseDrawer() {
     _drawerAnimation.reverse().orCancel;
@@ -92,6 +86,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
     if(state.gameStatus == GameStatus.completed) {
       _confettiController.play();
     }
+  }
+
+  void _handleOpenDrawer() {
+    _drawerAnimation.forward().orCancel;
+    _isDrawerOpen = true;
+    FocusScope.of(context).requestFocus(_focusSettingsNode);
   }
 
   void _handleToggleDrawer() {

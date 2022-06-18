@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/models/keyboard_key_info.dart';
 
 class KeyboardSettingsCubit extends Cubit<KeyboardConfig> {
   KeyboardSettingsCubit() : super(KeyboardConfig.forLang());
@@ -81,17 +82,4 @@ class KeyboardConfig {
       baseKeySize,
     );
   }
-}
-
-@immutable
-class KeyboardKeyInfo {
-  const KeyboardKeyInfo({
-    required this.key,
-    required this.altKey,
-    required this.size,
-  });
-
-  final LogicalKeyboardKey altKey;
-  final LogicalKeyboardKey key;
-  final Size size;
 }

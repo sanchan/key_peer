@@ -11,7 +11,6 @@ class ScoreboardCubit extends Cubit<ScoreboardState> {
 
   int get _totalCharacters => Blocs.get<GameBloc>().currentText.length;
 
-  void incrementTypedCharacters() => emit(state.copyWith(typedCharacters: () => state.typedCharacters + 1));
   void incrementErrors() {
     final errors = state.errors + 1;
     final accuracy = max((_totalCharacters - errors) / _totalCharacters * 100, 0).round();
@@ -21,6 +20,9 @@ class ScoreboardCubit extends Cubit<ScoreboardState> {
       errors: () => errors,
     ));
   }
+
+  void incrementTypedCharacters() => emit(state.copyWith(typedCharacters: () => state.typedCharacters + 1));
+
   void reset() => emit(const ScoreboardState());
 }
 
@@ -32,9 +34,9 @@ class ScoreboardState {
     this.errors = 0,
   });
 
-  final int typedCharacters;
   final int accuracy;
   final int errors;
+  final int typedCharacters;
 
   ScoreboardState copyWith({
     Copyable<int>? typedCharacters,

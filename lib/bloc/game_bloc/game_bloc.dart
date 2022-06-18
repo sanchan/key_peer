@@ -20,9 +20,9 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
     on<AddKeyEvent>(_handleAddKeyEvent);
   }
 
+  String get currentText => state.currentText;
   int get cursorPosition => state.cursorPosition;
   bool get isLessonCompleted => state.gameStatus == GameStatus.completed;
-  String get currentText => state.currentText;
   List<TypedKeyStatus> get statuses => state.statuses;
 
   void _handleAddKeyEvent(AddKeyEvent event, Emitter<GameState> emit) {

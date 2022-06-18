@@ -1,10 +1,18 @@
+// ignore_for_file: use_string_buffers
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:key_peer/utils/types.dart';
 
+@immutable
 class TextGenerator {
   const TextGenerator();
+
+  int get _capitalsPercentage => 20;
+  int get _maxWordLenght => 5;
+  int get _numbersPercentage => 15;
+  int get _punctuationPercentage => 30;
 
   String generate(TextGeneratorSettings settings) {
     if(settings.characters.isEmpty) {
@@ -65,11 +73,6 @@ class TextGenerator {
     return text.trim().substring(0, settings.textMaxLength - 1).trim();
   }
 
-  final int _capitalsPercentage = 20;
-  final int _maxWordLenght = 5;
-  final int _numbersPercentage = 15;
-  final int _punctuationPercentage = 30;
-
   String _generateWord(List<String> characters, bool ignore) {
     final random = Random();
 
@@ -101,11 +104,11 @@ class TextGeneratorSettings {
   });
 
   final List<String> characters;
-  final bool useRepeatLetters;
+  final int textMaxLength;
   final bool useCapitalLetters;
   final bool useNumbers;
   final bool usePunctuation;
-  final int textMaxLength;
+  final bool useRepeatLetters;
 
   TextGeneratorSettings copyWith({
     Copyable<List<String>>? characters,

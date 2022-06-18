@@ -17,8 +17,11 @@ class SettingsDrawer extends StatefulWidget {
 }
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
-
   final List _lessons = [];
+
+  void _handleChangeCapitalLetters(bool value) {
+    Blocs.get<GameSettingsCubit>().setUseCapitalLetters(value: value);
+  }
 
   // final List<LessonConfig> _lessons = [
   //   const LessonConfig(
@@ -51,10 +54,6 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     Blocs.get<GameSettingsCubit>().setTextGeneratorCharacters(characters);
   }
 
-  void _handleChangeCapitalLetters(bool value) {
-    Blocs.get<GameSettingsCubit>().setUseCapitalLetters(value: value);
-  }
-
   void _handleChangeNumbers(bool value) {
     Blocs.get<GameSettingsCubit>().setUseNumbers(value: value);
   }
@@ -63,16 +62,16 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     Blocs.get<GameSettingsCubit>().setUsePunctuation(value: value);
   }
 
-  void _handleChangeUseRepeatLetters(bool value) {
-    Blocs.get<GameSettingsCubit>().setUseRepeatLetters(value: value);
-  }
-
   void _handleChangeTextLength(int? length) {
     if(length == null) {
       return;
     }
 
     Blocs.get<GameSettingsCubit>().setTextMaxLength(length);
+  }
+
+  void _handleChangeUseRepeatLetters(bool value) {
+    Blocs.get<GameSettingsCubit>().setUseRepeatLetters(value: value);
   }
 
   @override

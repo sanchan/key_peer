@@ -23,6 +23,12 @@ class GameSettingsCubit extends Cubit<GameSettings> {
     ),
   ));
 
+  void setTextMaxLength(int maxLength) => emit(state.copyWith(
+    textGeneratorSettings: () => state.textGeneratorSettings.copyWith(
+      textMaxLength: () => max(maxLength, 25),
+    ),
+  ));
+
   void setUseCapitalLetters({ required bool value }) => emit(state.copyWith(
     textGeneratorSettings: () => state.textGeneratorSettings.copyWith(
       useCapitalLetters: () => value,
@@ -44,12 +50,6 @@ class GameSettingsCubit extends Cubit<GameSettings> {
   void setUseRepeatLetters({ required bool value }) => emit(state.copyWith(
     textGeneratorSettings: () => state.textGeneratorSettings.copyWith(
       useRepeatLetters: () => value,
-    ),
-  ));
-
-  void setTextMaxLength(int maxLength) => emit(state.copyWith(
-    textGeneratorSettings: () => state.textGeneratorSettings.copyWith(
-      textMaxLength: () => max(maxLength, 25),
     ),
   ));
 }
