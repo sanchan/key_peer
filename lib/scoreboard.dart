@@ -2,6 +2,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/bloc/cubits/scoreboard_cubit.dart';
 import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
 
@@ -14,21 +16,30 @@ class Scoreboard extends StatelessWidget {
       width: 500,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
-          ScoreboardItem(
-            icon: CupertinoIcons.speedometer,
-            value: '100',
-            caption: 'char/min',
+        children: [
+          BlocSelector<ScoreboardCubit, ScoreboardState, int>(
+            selector: (state) => state.speed,
+            builder: (context, speed) => ScoreboardItem(
+              icon: CupertinoIcons.speedometer,
+              value: speed.toString(),
+              caption: 'char/min',
+            ),
           ),
-          ScoreboardItem(
-            icon: CupertinoIcons.heart,
-            value: '87%',
-            caption: 'accuracy',
+          BlocSelector<ScoreboardCubit, ScoreboardState, int>(
+            selector: (state) => state.accuracy,
+            builder: (context, accuracy) => ScoreboardItem(
+              icon: CupertinoIcons.heart,
+              value: '$accuracy%',
+              caption: 'accuracy',
+            ),
           ),
-          ScoreboardItem(
-            icon: CupertinoIcons.flag_fill,
-            value: '3',
-            caption: 'errors',
+          BlocSelector<ScoreboardCubit, ScoreboardState, int>(
+            selector: (state) => state.errors,
+            builder: (context, errors) => ScoreboardItem(
+              icon: CupertinoIcons.flag_fill,
+              value: errors.toString(),
+              caption: 'errors',
+            ),
           ),
         ],
       ),

@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/bloc/blocs.dart';
+import 'package:key_peer/bloc/cubits/scoreboard_cubit.dart';
 import 'package:key_peer/bloc/game_bloc/events/add_key_event.dart';
 import 'package:key_peer/bloc/game_bloc/events/game_bloc_event.dart';
 import 'package:key_peer/bloc/game_bloc/events/set_game_status_event.dart';
@@ -20,8 +22,8 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
 
   int get cursorPosition => state.cursorPosition;
   bool get isLessonCompleted => state.gameStatus == GameStatus.completed;
+  String get currentText => state.currentText;
   List<TypedKeyStatus> get statuses => state.statuses;
-  String get targetText => state.currentText;
 
   void _handleAddKeyEvent(AddKeyEvent event, Emitter<GameState> emit) {
     final keyEvent = event.keyEvent;
@@ -34,7 +36,7 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
     }
 
     /// Ignore events
-    if(targetText.isEmpty || isLessonCompleted)  {
+    if(currentText.isEmpty || isLessonCompleted)  {
       return;
     }
 
@@ -48,7 +50,7 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
       ));
     } else if(keyEvent.logicalKey == LogicalKeyboardKey.arrowRight) {
       return emit(state.copyWith(
-        cursorPosition: () => min(state.cursorPosition + 1, targetText.length - 1),
+        cursorPosition: () => min(state.cursorPosition + 1, currentText.length - 1),
       ));
     }
 
@@ -61,7 +63,7 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
         ? keyEvent.logicalKey.keyLabel.toUpperCase()
         : keyEvent.logicalKey.keyLabel.toLowerCase();
 
-    if(keyLabel == targetText[cursorPosition]) {
+    if(keyLabel == currentText[cursorPosition]) {
       if(
         statuses[cursorPosition] == TypedKeyStatus.none ||
         statuses[cursorPosition] == TypedKeyStatus.correct
@@ -72,6 +74,8 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
       }
     } else {
       statuses[cursorPosition] = TypedKeyStatus.error;
+
+      Blocs.get<ScoreboardCubit>().incrementErrors();
     }
 
     /// Update game status if we need it
@@ -85,7 +89,7 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
       keyEvent: () => keyEvent,
       statuses: () => statuses,
       gameStatus: () => gameStatus,
-      cursorPosition: () => min(state.cursorPosition + 1, targetText.length - 1),
+      cursorPosition: () => min(state.cursorPosition + 1, currentText.length - 1),
     ));
   }
 
@@ -93,12 +97,16 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
     gameStatus: () => event.status,
   ));
 
-  void _handleSetText(SetTextEvent event, Emitter<GameState> emit) => emit(state.copyWith(
-    currentText: () => event.text,
-    statuses: () => event.text.split('').map((char) => TypedKeyStatus.none).toList(),
-    gameStatus: () => GameStatus.none,
-    cursorPosition: () => 0,
-  ));
+  void _handleSetText(SetTextEvent event, Emitter<GameState> emit) {
+    Blocs.get<ScoreboardCubit>().reset();
+
+    emit(state.copyWith(
+      currentText: () => event.text,
+      statuses: () => event.text.split('').map((char) => TypedKeyStatus.none).toList(),
+      gameStatus: () => GameStatus.none,
+      cursorPosition: () => 0,
+    ));
+  }
 }
 
 extension GameBlocEmitters on GameBloc {

@@ -1,29 +1,61 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:key_peer/bloc/blocs.dart';
+import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
+import 'package:key_peer/utils/types.dart';
 
-class ScoreboardCubit extends Cubit<SpeedometerState> {
-  ScoreboardCubit() : super(SpeedometerState(value: 0));
+class ScoreboardCubit extends Cubit<ScoreboardState> {
+  ScoreboardCubit() : super(const ScoreboardState());
 
-  void increment() => emit(state.copyWith(value: state.value + 1));
+  int get _totalCharacters => Blocs.get<GameBloc>().currentText.length;
 
-  void reset() => emit(SpeedometerState(value: 0));
+  void setSpeed(int speed) => emit(state.copyWith(speed: () => speed));
+  void setAccuracy(int accuracy) => emit(state.copyWith(accuracy: () => accuracy));
+  void incrementErrors() {
+    final errors = state.errors + 1;
+    final accuracy = max((_totalCharacters - errors) / _totalCharacters * 100, 0).round();
 
-  void setLabel(String label) => emit(state.copyWith(label: label));
+    emit(state.copyWith(
+      accuracy: () => accuracy,
+      errors: () => errors,
+    ));
+  }
+  void reset() => emit(const ScoreboardState());
 }
 
-class SpeedometerState {
-  SpeedometerState({
-    required this.value,
-    this.label = 'chars/min',
+@immutable
+class ScoreboardState {
+  const ScoreboardState({
+    this.speedLabel = 'chars/min',
+    this.speed = 0,
+    this.accuracyLabel = 'accuracy',
+    this.accuracy = 100,
+    this.errorsLabel = 'errors',
+    this.errors = 0,
   });
 
-  final String label;
-  final int value;
+  final String speedLabel;
+  final int speed;
+  final String accuracyLabel;
+  final int accuracy;
+  final String errorsLabel;
+  final int errors;
 
-  SpeedometerState copyWith({
-    int? value,
-    String? label,
-  })  => SpeedometerState(
-    value: value ?? this.value,
-    label: label ?? this.label,
+  ScoreboardState copyWith({
+    Copyable<String>? speedLabel,
+    Copyable<int>? speed,
+    Copyable<String>? accuracyLabel,
+    Copyable<int>? accuracy,
+    Copyable<String>? errorsLabel,
+    Copyable<int>? errors,
+  })  => ScoreboardState(
+    speedLabel: speedLabel?.call() ?? this.speedLabel,
+    speed: speed?.call() ?? this.speed,
+    accuracyLabel: accuracyLabel?.call() ?? this.accuracyLabel,
+    accuracy: accuracy?.call() ?? this.accuracy,
+    errorsLabel: errorsLabel?.call() ?? this.errorsLabel,
+    errors: errors?.call() ?? this.errors,
   );
 }
