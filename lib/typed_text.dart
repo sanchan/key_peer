@@ -20,26 +20,6 @@ class _TypedTextState extends State<TypedText> {
   String get _targetText => Blocs.get<GameBloc>().targetText;
   int get _cursorIndex => Blocs.get<GameBloc>().state.cursorPosition;
 
-
-
-  void _moveCursorLeft() {
-    // setState(() {
-    //   if(_cursorIndex > 0) {
-    //     _cursorIndex--;
-    //   }
-    // });
-  }
-
-  void _moveCursorRight() {
-    // if(_cursorIndex < _targetText.length - 1) {
-    //   setState(() {
-    //     _cursorIndex++;
-    //   });
-    // }
-  }
-
-  void _updateCharStatus(int index, TypedKeyStatus status) => Blocs.get<GameBloc>().updateCharStatus(index, status);
-
   Color _textColor(int index) {
     switch (_statuses[index]) {
       case TypedKeyStatus.none:

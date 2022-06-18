@@ -48,7 +48,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
     );
 
     // Blocs.get<TextCubit>().generateTargetText();
-    Blocs.get<GameBloc>().setText('monkey11');
+    Blocs.get<GameBloc>().setText('monkey');
   }
 
   @override

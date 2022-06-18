@@ -1,5 +1,8 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/bloc/cubits/game_settings_cubit.dart';
@@ -24,6 +27,7 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
   String get targetText => state.targetText;
   int get cursorPosition => state.cursorPosition;
   TextGenerator get textGenerator => _settings.textGenerator;
+  bool get isLessonCompleted => state.gameStatus == GameStatus.completed;
 
   void _handleSetText(SetTextEvent event, Emitter<GameState> emit) => emit(state.copyWith(
     targetText: () => event.text,
@@ -36,53 +40,70 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
   ));
 
   void _handleAddKeyEvent(AddKeyEvent event, Emitter<GameState> emit) {
+    final keyEvent = event.keyEvent;
+
+    /// If keyEvent is 'null' or 'RawKeyUpEvent' we only want to track the event, but we don't have anything else to do.
+    if(keyEvent == null || keyEvent is RawKeyUpEvent) {
+      return emit(state.copyWith(
+        keyEvent: () => keyEvent,
+      ));
+    }
+
+    /// Ignore events
+    if(targetText.isEmpty || isLessonCompleted)  {
+      return;
+    }
+
+    /// Move cursor when pressing left|right arrows or backspace.
+    if(
+      keyEvent.logicalKey == LogicalKeyboardKey.backspace ||
+      keyEvent.logicalKey == LogicalKeyboardKey.arrowLeft
+    ) {
+      return emit(state.copyWith(
+        cursorPosition: () => max(state.cursorPosition - 1, 0),
+      ));
+    } else if(keyEvent.logicalKey == LogicalKeyboardKey.arrowRight) {
+      return emit(state.copyWith(
+        cursorPosition: () => min(state.cursorPosition + 1, targetText.length - 1),
+      ));
+    }
+
+    /// Update characters status based on the keyEvent we recieved.
+    final statuses = List.of(state.statuses);
+    final modifiers = keyEvent.data.modifiersPressed;
+    final keyLabel =
+      modifiers.containsKey(ModifierKey.shiftModifier) ||
+      modifiers.containsKey(ModifierKey.capsLockModifier)
+        ? keyEvent.logicalKey.keyLabel.toUpperCase()
+        : keyEvent.logicalKey.keyLabel.toLowerCase();
+
+    if(keyLabel == targetText[cursorPosition]) {
+      if(
+        statuses[cursorPosition] == TypedKeyStatus.none ||
+        statuses[cursorPosition] == TypedKeyStatus.correct
+      ) {
+        statuses[cursorPosition] = TypedKeyStatus.correct;
+      } else {
+        statuses[cursorPosition] = TypedKeyStatus.corrected;
+      }
+    } else {
+      statuses[cursorPosition] = TypedKeyStatus.error;
+    }
+
+    /// Update game status if we need it
+    final gameStatus = statuses.every((status) => status == TypedKeyStatus.none)
+      ? GameStatus.none
+      : statuses.every((status) => [TypedKeyStatus.correct, TypedKeyStatus.corrected].contains(status))
+        ? GameStatus.completed
+        : GameStatus.started;
+
     emit(state.copyWith(
-      keyEvent: () => event.keyEvent,
+      keyEvent: () => keyEvent,
+      statuses: () => statuses,
+      gameStatus: () => gameStatus,
+      cursorPosition: () => min(state.cursorPosition + 1, targetText.length - 1),
     ));
   }
-
-
-  // void _handleEventChange(BuildContext _, GameState state) {
-  //   final event = state.keyEvent;
-
-  //   if(_targetText.isEmpty || _isLessonCompleted || event is RawKeyUpEvent || event?.character == null  ) {
-  //     return;
-  //   }
-
-  //   if(
-  //     event?.logicalKey == LogicalKeyboardKey.backspace ||
-  //     event?.logicalKey == LogicalKeyboardKey.arrowLeft
-  //   ) {
-  //     return _moveCursorLeft();
-  //   } else if(event?.logicalKey == LogicalKeyboardKey.arrowRight) {
-  //     return _moveCursorRight();
-  //   }
-
-  //   if(event != null) {
-  //     var keyLabel = event.logicalKey.keyLabel;
-  //     final modifiers = event.data.modifiersPressed;
-  //     keyLabel =
-  //       modifiers.containsKey(ModifierKey.shiftModifier) ||
-  //       modifiers.containsKey(ModifierKey.capsLockModifier)
-  //         ? keyLabel.toUpperCase()
-  //         : keyLabel.toLowerCase();
-
-  //     if(keyLabel == _targetText[_cursorIndex]) {
-  //       if(
-  //         _statuses[_cursorIndex] == TypedKeyStatus.none ||
-  //         _statuses[_cursorIndex] == TypedKeyStatus.correct
-  //       ) {
-  //         _updateCharStatus(_cursorIndex, TypedKeyStatus.correct);
-  //       } else {
-  //         _updateCharStatus(_cursorIndex, TypedKeyStatus.corrected);
-  //       }
-  //     } else {
-  //       _updateCharStatus(_cursorIndex, TypedKeyStatus.error);
-  //     }
-
-  //     _moveCursorRight();
-  //   }
-  // }
 }
 
 extension GameBlocEmitters on GameBloc {
@@ -93,24 +114,6 @@ extension GameBlocEmitters on GameBloc {
   void setStatus(GameStatus status) => add(SetGameStatusEvent(status: status));
 
   void addKeyEvent(RawKeyEvent? keyEvent) => add(AddKeyEvent(keyEvent: keyEvent));
-
-  void updateCharStatus(int index, TypedKeyStatus status) {
-    final statuses = List.of(state.statuses);
-    if(index < statuses.length) {
-      statuses[index] = status;
-    }
-
-    final gameStatus = statuses.every((status) => status == TypedKeyStatus.none)
-      ? GameStatus.none
-      : statuses.every((status) => [TypedKeyStatus.correct, TypedKeyStatus.corrected].contains(status))
-        ? GameStatus.completed
-        : GameStatus.started;
-
-    emit(state.copyWith(
-      statuses: () => statuses,
-      gameStatus: () => gameStatus,
-    ));
-  }
 }
 
 @immutable
