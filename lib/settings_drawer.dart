@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
-import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
+import 'package:key_peer/bloc/cubits/game_settings_cubit.dart';
 import 'package:key_peer/models/text_generator.dart';
 import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
@@ -47,53 +47,24 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
   //   ),
   // ];
 
-  void _generateTargetText() {
-    Blocs.get<GameBloc>().generateText();
+  void _handleChangeCharacters(List<String> characters) {
+    Blocs.get<GameSettingsCubit>().setTextGeneratorCharacters(characters);
   }
 
   void _handleChangeCapitalLetters(bool value) {
-    // final settings = _settings.clone()
-    //   ..useCapitalLetters = value;
-
-    // _settings = settings;
-
-    // _generateTargetText();
-  }
-
-  void _handleChangeLesson(List<String> characters) {
-    // final settings = _settings.clone()
-    //   ..currentLesson = lessonConfig;
-
-    // _settings = settings;
-
-    // _generateTargetText();
+    Blocs.get<GameSettingsCubit>().setUseCapitalLetters(value: value);
   }
 
   void _handleChangeNumbers(bool value) {
-    // final settings = _settings.clone()
-    //   ..useNumbers = value;
-
-    // _settings = settings;
-
-    // _generateTargetText();
+    Blocs.get<GameSettingsCubit>().setUseNumbers(value: value);
   }
 
   void _handleChangePunctuation(bool value) {
-    // final settings = _settings.clone()
-    //   ..usePunctuation = value;
-
-    // _settings = settings;
-
-    // _generateTargetText();
+    Blocs.get<GameSettingsCubit>().setUsePunctuation(value: value);
   }
 
-  void _handleChangeRepeatLetters(bool value) {
-    // final settings = _settings.clone()
-    //   ..repeatLetter = value;
-
-    // _settings = settings;
-
-    // _generateTargetText();
+  void _handleChangeUseRepeatLetters(bool value) {
+    Blocs.get<GameSettingsCubit>().setUseRepeatLetters(value: value);
   }
 
   void _handleChangeTextLength(int? length) {
@@ -101,12 +72,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       return;
     }
 
-    // final settings = _settings.clone()
-    //   ..textLength = length;
-
-    // _settings = settings;
-
-    // _generateTargetText();
+    Blocs.get<GameSettingsCubit>().setTextMaxLength(length);
   }
 
   @override
@@ -123,8 +89,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       ),
       width: 250,
       child: SingleChildScrollView(
-        child: BlocSelector<GameBloc, GameState, TextGeneratorSettings>(
-          selector: (state) => state.gameSettings.textGeneratorSettings,
+        child: BlocSelector<GameSettingsCubit, GameSettings, TextGeneratorSettings>(
+          selector: (state) => state.textGeneratorSettings,
           builder: (_, TextGeneratorSettings settings) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +99,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                 _SettingsBlock(
                   children: _lessons.asMap().entries.map((lesson) {
                     return GestureDetector(
-                      onTap: () => _handleChangeLesson(lesson.value),
+                      onTap: () => _handleChangeCharacters(lesson.value),
                       child: _SettingsBlockItem(
                         isFirst: lesson.key == 0,
                         isLast: lesson.key == _lessons.length - 1,
@@ -185,8 +151,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                       isLast: false,
                       child: _SettingsSwitchItem(
                         label: 'Repeat letters',
-                        value: settings.repeatLetter,
-                        onChanged: _handleChangeRepeatLetters,
+                        value: settings.useRepeatLetters,
+                        onChanged: _handleChangeUseRepeatLetters,
                       ),
                     ),
                     _SettingsBlockItem(
@@ -197,7 +163,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                         children: [
                           const Text('Text length'),
                           MacosPopupButton<int>(
-                            value: settings.textLength,
+                            value: settings.textMaxLength,
                             onChanged: _handleChangeTextLength,
                             items: <int>[70, 40, 25]
                               .map<MacosPopupMenuItem<int>>((int value) {

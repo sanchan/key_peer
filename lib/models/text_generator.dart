@@ -1,20 +1,25 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:key_peer/utils/types.dart';
 
 class TextGenerator {
   const TextGenerator();
 
   String generate(TextGeneratorSettings settings) {
+    if(settings.characters.isEmpty) {
+      return 'key peer';
+    }
+
     final random = Random();
     var text = '';
 
-    while(text.length < settings.textLength) {
+    while(text.length < settings.textMaxLength) {
       final word = _generateWord(
         settings.useNumbers && random.nextInt(100) < _numbersPercentage
           ? ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
           : settings.characters,
-        !settings.repeatLetter,
+        !settings.useRepeatLetters,
       );
 
       // Discard 1 char words if it's not a vowel nor a number
@@ -57,7 +62,7 @@ class TextGenerator {
     }
 
     // Make sure we don't exceed the max length defined by the user
-    return text.trim().substring(0, settings.textLength - 1).trim();
+    return text.trim().substring(0, settings.textMaxLength - 1).trim();
   }
 
   final int _capitalsPercentage = 20;
@@ -88,17 +93,33 @@ class TextGenerator {
 class TextGeneratorSettings {
   const TextGeneratorSettings({
     this.characters = const [],
-    this.repeatLetter = false,
+    this.useRepeatLetters = false,
     this.useCapitalLetters = false,
     this.useNumbers = false,
     this.usePunctuation = false,
-    this.textLength = 25,
+    this.textMaxLength = 25,
   });
 
   final List<String> characters;
-  final bool repeatLetter;
-  final int textLength;
+  final bool useRepeatLetters;
   final bool useCapitalLetters;
   final bool useNumbers;
   final bool usePunctuation;
+  final int textMaxLength;
+
+  TextGeneratorSettings copyWith({
+    Copyable<List<String>>? characters,
+    Copyable<bool>? useRepeatLetters,
+    Copyable<bool>? useCapitalLetters,
+    Copyable<bool>? useNumbers,
+    Copyable<bool>? usePunctuation,
+    Copyable<int>? textMaxLength,
+  }) => TextGeneratorSettings(
+    characters: characters?.call() ?? this.characters,
+    useRepeatLetters: useRepeatLetters?.call() ?? this.useRepeatLetters,
+    useCapitalLetters: useCapitalLetters?.call() ?? this.useCapitalLetters,
+    useNumbers: useNumbers?.call() ?? this.useNumbers,
+    usePunctuation: usePunctuation?.call() ?? this.usePunctuation,
+    textMaxLength: textMaxLength?.call() ?? this.textMaxLength,
+  );
 }

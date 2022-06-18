@@ -35,7 +35,8 @@ class KeyboardConfig {
     }
   }
 
-  factory KeyboardConfig.forLang() {
+  // ignore: avoid_unused_constructor_parameters
+  factory KeyboardConfig.forLang({ String lang = 'en' }) {
     return KeyboardConfig(
       keys: const [
         [_K.backquote, _K.digit1, _K.digit2, _K.digit3, _K.digit4, _K.digit5, _K.digit6, _K.digit7, _K.digit8, _K.digit9, _K.digit0, _K.minus, _K.equal, _K.backspace],
