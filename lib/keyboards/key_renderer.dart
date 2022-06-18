@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/cubits/keyboard_config_cubit.dart';
-import 'package:key_peer/bloc/cubits/keyboard_cubit.dart';
+import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 
 class KeyRenderer extends StatefulWidget {
   const KeyRenderer({
@@ -92,12 +92,13 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
 
   late AnimationController _animationController;
 
-  void _handleEventChange(BuildContext _, RawKeyEvent? event) {
+  void _handleEventChange(BuildContext _, GameState state) {
+    final event = state.keyEvent;
+
     switch (event.runtimeType) {
       case RawKeyDownEvent:
         if (event?.logicalKey == _logicalKey) {
-         _animationController.forward().ignore();
-
+          _animationController.forward().ignore();
         }
         break;
       case Null:
@@ -110,9 +111,9 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-
-    return BlocListener<KeyboardCubit, RawKeyEvent?>(
+    return BlocListener<GameBloc, GameState>(
       listener: _handleEventChange,
+      listenWhen: (GameState previous, GameState current) => previous.keyEvent != current.keyEvent,
       child: AnimatedBuilder(
         animation: _animationController,
         builder: (_, __) {

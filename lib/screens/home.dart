@@ -9,7 +9,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
-import 'package:key_peer/bloc/cubits/keyboard_cubit.dart';
 import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 import 'package:key_peer/keyboards/keyboard_en.dart';
 import 'package:key_peer/scoreboard.dart';
@@ -118,7 +117,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
           children: [
             GestureDetector(
               onTap: _handleCloseDrawer,
-              child: BlocBuilder<KeyboardCubit, RawKeyEvent?>(
+              child: BlocBuilder<GameBloc, GameState>(
                 builder: (_, __) {
                   return Container(
                     color: Colors.transparent,

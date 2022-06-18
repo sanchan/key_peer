@@ -36,11 +36,53 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
   ));
 
   void _handleAddKeyEvent(AddKeyEvent event, Emitter<GameState> emit) {
-    print('>>> ${event.keyEvent}');
     emit(state.copyWith(
       keyEvent: () => event.keyEvent,
     ));
   }
+
+
+  // void _handleEventChange(BuildContext _, GameState state) {
+  //   final event = state.keyEvent;
+
+  //   if(_targetText.isEmpty || _isLessonCompleted || event is RawKeyUpEvent || event?.character == null  ) {
+  //     return;
+  //   }
+
+  //   if(
+  //     event?.logicalKey == LogicalKeyboardKey.backspace ||
+  //     event?.logicalKey == LogicalKeyboardKey.arrowLeft
+  //   ) {
+  //     return _moveCursorLeft();
+  //   } else if(event?.logicalKey == LogicalKeyboardKey.arrowRight) {
+  //     return _moveCursorRight();
+  //   }
+
+  //   if(event != null) {
+  //     var keyLabel = event.logicalKey.keyLabel;
+  //     final modifiers = event.data.modifiersPressed;
+  //     keyLabel =
+  //       modifiers.containsKey(ModifierKey.shiftModifier) ||
+  //       modifiers.containsKey(ModifierKey.capsLockModifier)
+  //         ? keyLabel.toUpperCase()
+  //         : keyLabel.toLowerCase();
+
+  //     if(keyLabel == _targetText[_cursorIndex]) {
+  //       if(
+  //         _statuses[_cursorIndex] == TypedKeyStatus.none ||
+  //         _statuses[_cursorIndex] == TypedKeyStatus.correct
+  //       ) {
+  //         _updateCharStatus(_cursorIndex, TypedKeyStatus.correct);
+  //       } else {
+  //         _updateCharStatus(_cursorIndex, TypedKeyStatus.corrected);
+  //       }
+  //     } else {
+  //       _updateCharStatus(_cursorIndex, TypedKeyStatus.error);
+  //     }
+
+  //     _moveCursorRight();
+  //   }
+  // }
 }
 
 extension GameBlocEmitters on GameBloc {
