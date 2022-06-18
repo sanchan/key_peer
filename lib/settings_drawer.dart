@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
-import 'package:key_peer/bloc/cubits/game_settings_cubit.dart';
 import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
@@ -122,7 +121,8 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
       ),
       width: 250,
       child: SingleChildScrollView(
-        child: BlocBuilder<GameSettingsCubit, GameSettings>(
+        child: BlocSelector<GameBloc, GameState, GameSettings>(
+          selector: (state) => state.gameSettings,
           builder: (_, GameSettings settings) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,

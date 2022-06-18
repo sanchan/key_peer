@@ -4,8 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:key_peer/bloc/blocs.dart';
-import 'package:key_peer/bloc/cubits/game_settings_cubit.dart';
 import 'package:key_peer/bloc/game_bloc/events/add_key_event.dart';
 import 'package:key_peer/bloc/game_bloc/events/game_bloc_event.dart';
 import 'package:key_peer/bloc/game_bloc/events/set_game_status_event.dart';
@@ -21,23 +19,12 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
     on<AddKeyEvent>(_handleAddKeyEvent);
   }
 
-  // TODO Move GameSettings to here
-  GameSettings get _settings => Blocs.get<GameSettingsCubit>().state;
-  List<TypedKeyStatus> get statuses => state.statuses;
-  String get targetText => state.targetText;
+  GameSettings get _settings => state.gameSettings;
   int get cursorPosition => state.cursorPosition;
-  TextGenerator get textGenerator => _settings.textGenerator;
   bool get isLessonCompleted => state.gameStatus == GameStatus.completed;
-
-  void _handleSetText(SetTextEvent event, Emitter<GameState> emit) => emit(state.copyWith(
-    targetText: () => event.text,
-    statuses: () => event.text.split('').map((char) => TypedKeyStatus.none).toList(),
-    cursorPosition: () => 0,
-  ));
-
-  void _handleSetGameStatus(SetGameStatusEvent event, Emitter<GameState> emit) => emit(state.copyWith(
-    gameStatus: () => event.status,
-  ));
+  List<TypedKeyStatus> get statuses => state.statuses;
+  String get targetText => state.currentText;
+  TextGenerator get textGenerator => _settings.textGenerator;
 
   void _handleAddKeyEvent(AddKeyEvent event, Emitter<GameState> emit) {
     final keyEvent = event.keyEvent;
@@ -104,12 +91,23 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
       cursorPosition: () => min(state.cursorPosition + 1, targetText.length - 1),
     ));
   }
+
+  void _handleSetGameStatus(SetGameStatusEvent event, Emitter<GameState> emit) => emit(state.copyWith(
+    gameStatus: () => event.status,
+  ));
+
+  void _handleSetText(SetTextEvent event, Emitter<GameState> emit) => emit(state.copyWith(
+    currentText: () => event.text,
+    statuses: () => event.text.split('').map((char) => TypedKeyStatus.none).toList(),
+    cursorPosition: () => 0,
+  ));
 }
 
 extension GameBlocEmitters on GameBloc {
   void setText(String text) => add(SetTextEvent(text: text));
 
-  void generateText() => setText(textGenerator.generateText(_settings));
+  void generateText() => add(SetTextEvent(text: 'qwerty'));
+  // void generateText() => setText(state.textGenerator.generateText(state.gameSettings));
 
   void setStatus(GameStatus status) => add(SetGameStatusEvent(status: status));
 
@@ -119,31 +117,86 @@ extension GameBlocEmitters on GameBloc {
 @immutable
 class GameState {
   const GameState({
-    this.targetText = '',
+    this.gameSettings = const GameSettings(),
+    this.currentText = '',
     this.cursorPosition = 0,
     this.statuses = const [],
     this.gameStatus = GameStatus.none,
     this.keyEvent,
   });
 
-  final List<TypedKeyStatus> statuses;
-  // TODO Rename to 'text'
-  final String targetText;
+  final String currentText;
   final int cursorPosition;
+  final GameSettings gameSettings;
   final GameStatus gameStatus;
   final RawKeyEvent? keyEvent;
+  final List<TypedKeyStatus> statuses;
 
   GameState copyWith({
-    Copyable<String>? targetText,
+    Copyable<GameSettings>? gameSettings,
+    Copyable<String>? currentText,
     Copyable<int>? cursorPosition,
     Copyable<List<TypedKeyStatus>>? statuses,
     Copyable<GameStatus>? gameStatus,
     Copyable<RawKeyEvent>? keyEvent,
   }) => GameState(
-    targetText: targetText?.call() ?? this.targetText,
+    gameSettings: gameSettings?.call() ?? this.gameSettings,
+    currentText: currentText?.call() ?? this.currentText,
     cursorPosition: cursorPosition?.call() ?? this.cursorPosition,
     statuses: statuses?.call() ?? this.statuses,
     gameStatus: gameStatus?.call() ?? this.gameStatus,
     keyEvent: keyEvent?.call() ?? this.keyEvent,
   );
+}
+
+@immutable
+class GameSettings {
+  const GameSettings({
+    this.textGenerator = const TextGenerator(),
+    this.currentLesson,
+    this.repeatLetter = false,
+    this.useCapitalLetters = false,
+    this.useNumbers = false,
+    this.usePunctuation = false,
+    this.textLength = 25,
+    this.maxErrors = 10,
+  });
+
+  final LessonConfig? currentLesson;
+  final int maxErrors;
+  final bool repeatLetter;
+  final TextGenerator textGenerator;
+  final int textLength;
+  final bool useCapitalLetters;
+  final bool useNumbers;
+  final bool usePunctuation;
+
+  GameSettings copyWith({
+    Copyable<LessonConfig>? currentLesson,
+    Copyable<int>? maxErrors,
+    Copyable<bool>? repeatLetter,
+    Copyable<int>? textLength,
+    Copyable<bool>? useCapitalLetters,
+    Copyable<bool>? useNumbers,
+    Copyable<bool>? usePunctuation,
+  }) => GameSettings(
+    currentLesson: currentLesson?.call() ?? this.currentLesson,
+    repeatLetter: repeatLetter?.call() ?? this.repeatLetter,
+    useCapitalLetters: useCapitalLetters?.call() ?? this.useCapitalLetters,
+    useNumbers: useNumbers?.call() ?? this.useNumbers,
+    usePunctuation: usePunctuation?.call() ?? this.usePunctuation,
+    textLength: textLength?.call() ?? this.textLength,
+    maxErrors: maxErrors?.call() ?? this.maxErrors,
+  );
+}
+
+@immutable
+class LessonConfig {
+  const LessonConfig({
+    required this.id,
+    required this.characters,
+  });
+
+  final List<String> characters;
+  final int id;
 }

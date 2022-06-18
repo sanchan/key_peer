@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:key_peer/bloc/cubits/game_settings_cubit.dart';
+import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 
 class TextGenerator {
   const TextGenerator();
