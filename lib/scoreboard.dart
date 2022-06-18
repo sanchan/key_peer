@@ -22,7 +22,7 @@ class Scoreboard extends StatelessWidget {
             builder: (context, typedCharacters) => ScoreboardItem(
               icon: CupertinoIcons.speedometer,
               value: typedCharacters.toString(),
-              caption: 'char/min',
+              caption: 'typed chars',
             ),
           ),
           BlocSelector<ScoreboardCubit, ScoreboardState, int>(

@@ -11,8 +11,6 @@ class ScoreboardCubit extends Cubit<ScoreboardState> {
 
   int get _totalCharacters => Blocs.get<GameBloc>().currentText.length;
 
-  void setSpeed(int speed) => emit(state.copyWith(speed: () => speed));
-  void setAccuracy(int accuracy) => emit(state.copyWith(accuracy: () => accuracy));
   void incrementTypedCharacters() => emit(state.copyWith(typedCharacters: () => state.typedCharacters + 1));
   void incrementErrors() {
     final errors = state.errors + 1;
@@ -29,38 +27,22 @@ class ScoreboardCubit extends Cubit<ScoreboardState> {
 @immutable
 class ScoreboardState {
   const ScoreboardState({
-    this.speedLabel = 'chars/min',
-    this.speed = 0,
-    this.accuracyLabel = 'accuracy',
-    this.accuracy = 100,
-    this.errorsLabel = 'errors',
-    this.errors = 0,
     this.typedCharacters = 0,
+    this.accuracy = 100,
+    this.errors = 0,
   });
 
-  final String speedLabel;
-  final int speed;
-  final String accuracyLabel;
-  final int accuracy;
-  final String errorsLabel;
-  final int errors;
   final int typedCharacters;
+  final int accuracy;
+  final int errors;
 
   ScoreboardState copyWith({
-    Copyable<String>? speedLabel,
-    Copyable<int>? speed,
-    Copyable<String>? accuracyLabel,
-    Copyable<int>? accuracy,
-    Copyable<String>? errorsLabel,
-    Copyable<int>? errors,
     Copyable<int>? typedCharacters,
+    Copyable<int>? accuracy,
+    Copyable<int>? errors,
   })  => ScoreboardState(
-    speedLabel: speedLabel?.call() ?? this.speedLabel,
-    speed: speed?.call() ?? this.speed,
-    accuracyLabel: accuracyLabel?.call() ?? this.accuracyLabel,
-    accuracy: accuracy?.call() ?? this.accuracy,
-    errorsLabel: errorsLabel?.call() ?? this.errorsLabel,
-    errors: errors?.call() ?? this.errors,
     typedCharacters: typedCharacters?.call() ?? this.typedCharacters,
+    accuracy: accuracy?.call() ?? this.accuracy,
+    errors: errors?.call() ?? this.errors,
   );
 }
