@@ -27,6 +27,15 @@ class Home extends StatefulWidget {
 
 // ignore: prefer_mixin
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin, WindowListener {
+  static const _kDrawerWidth = 250.0;
+
+  final ConfettiController _confettiController = ConfettiController(duration: const Duration(milliseconds: 1500));
+  late final AnimationController _drawerAnimation;
+  final FocusNode _focusMainNode = FocusNode();
+  final FocusNode _focusSettingsNode = FocusNode();
+  bool _isDrawerOpen = false;
+  bool _isFullscreen = false;
+
   @override
   void dispose() {
     windowManager.removeListener(this);
@@ -66,15 +75,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
       _isFullscreen = false;
     });
   }
-
-  final ConfettiController _confettiController = ConfettiController(duration: const Duration(milliseconds: 1500));
-  late final AnimationController _drawerAnimation;
-  final FocusNode _focusMainNode = FocusNode();
-  final FocusNode _focusSettingsNode = FocusNode();
-  bool _isDrawerOpen = false;
-  bool _isFullscreen = false;
-
-  static const _kDrawerWidth = 250.0;
 
   void _handleCloseDrawer() {
     _drawerAnimation.reverse().orCancel;

@@ -17,6 +17,8 @@ class KeyRenderer extends StatefulWidget {
 }
 
 class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
   @override
   void initState() {
     super.initState();
@@ -89,8 +91,6 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
 
     return 13.0;
   }
-
-  late AnimationController _animationController;
 
   void _handleEventChange(BuildContext _, GameState state) {
     final event = state.keyEvent;

@@ -8,6 +8,8 @@ import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 
 @immutable
 class Blocs {
+  static final _getIt = GetIt.instance;
+
   static T get<T extends Object>() => _getIt.get<T>();
 
   static void setup() {
@@ -17,6 +19,4 @@ class Blocs {
       ..registerSingleton(GameBloc())
       ..registerSingleton(ScoreboardCubit());
   }
-
-  static final _getIt = GetIt.instance;
 }
