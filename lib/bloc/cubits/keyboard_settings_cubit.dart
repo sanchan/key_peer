@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class KeyboardConfigCubit extends Cubit<KeyboardConfig> {
-  KeyboardConfigCubit() : super(KeyboardConfig.forLang());
+class KeyboardSettingsCubit extends Cubit<KeyboardConfig> {
+  KeyboardSettingsCubit() : super(KeyboardConfig.forLang());
 
   void setConfig(KeyboardConfig config) => emit(config);
 }

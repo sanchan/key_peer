@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:key_peer/bloc/cubits/keyboard_config_cubit.dart';
+import 'package:key_peer/bloc/cubits/keyboard_settings_cubit.dart';
 import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 
 class KeyRenderer extends StatefulWidget {
