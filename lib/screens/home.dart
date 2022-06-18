@@ -44,8 +44,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
       duration: const Duration(milliseconds: 250),
     );
 
-    // Blocs.get<TextCubit>().generateTargetText();
-    Blocs.get<GameBloc>().setText('monkey');
+    Blocs.get<GameBloc>().setText('key peer');
   }
 
   @override
@@ -76,6 +75,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
 
   static const _kDrawerWidth = 250.0;
 
+  void _handleOpenDrawer() {
+    _drawerAnimation.forward().orCancel;
+    _isDrawerOpen = true;
+    FocusScope.of(context).requestFocus(_focusSettingsNode);
+  }
+
   void _handleCloseDrawer() {
     _drawerAnimation.reverse().orCancel;
     _isDrawerOpen = false;
@@ -89,13 +94,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
   }
 
   void _handleToggleDrawer() {
-    if(_drawerAnimation.isCompleted) {
-      _handleCloseDrawer();
-    } else {
-      _isDrawerOpen = true;
-      FocusScope.of(context).requestFocus(_focusSettingsNode);
-      _drawerAnimation.forward().orCancel;
-    }
+    _drawerAnimation.isCompleted
+      ? _handleCloseDrawer()
+      : _handleOpenDrawer();
   }
 
   KeyEventResult _onKey(_, RawKeyEvent event) {

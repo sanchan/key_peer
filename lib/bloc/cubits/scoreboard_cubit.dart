@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SpeedometerCubit extends Cubit<SpeedometerState> {
-  SpeedometerCubit() : super(SpeedometerState(value: 0));
+class ScoreboardCubit extends Cubit<SpeedometerState> {
+  ScoreboardCubit() : super(SpeedometerState(value: 0));
 
   void increment() => emit(state.copyWith(value: state.value + 1));
 
