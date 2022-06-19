@@ -3,7 +3,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:key_peer/utils/types.dart';
+import 'package:key_peer/models/text_generator_settings.dart';
 
 @immutable
 class TextGenerator {
@@ -16,7 +16,7 @@ class TextGenerator {
 
   String generate(TextGeneratorSettings settings) {
     if(settings.characters.isEmpty) {
-      return 'key peer';
+      return 'hi my friend, welcome to key peer';
     }
 
     final random = Random();
@@ -25,7 +25,7 @@ class TextGenerator {
     while(text.length < settings.textMaxLength) {
       final word = _generateWord(
         settings.useNumbers && random.nextInt(100) < _numbersPercentage
-          ? ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+          ? ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
           : settings.characters,
         !settings.useRepeatLetters,
       );
@@ -90,39 +90,4 @@ class TextGenerator {
 
     return word;
   }
-}
-
-@immutable
-class TextGeneratorSettings {
-  const TextGeneratorSettings({
-    this.characters = const [],
-    this.useRepeatLetters = false,
-    this.useCapitalLetters = false,
-    this.useNumbers = false,
-    this.usePunctuation = false,
-    this.textMaxLength = 25,
-  });
-
-  final List<String> characters;
-  final int textMaxLength;
-  final bool useCapitalLetters;
-  final bool useNumbers;
-  final bool usePunctuation;
-  final bool useRepeatLetters;
-
-  TextGeneratorSettings copyWith({
-    Copyable<List<String>>? characters,
-    Copyable<bool>? useRepeatLetters,
-    Copyable<bool>? useCapitalLetters,
-    Copyable<bool>? useNumbers,
-    Copyable<bool>? usePunctuation,
-    Copyable<int>? textMaxLength,
-  }) => TextGeneratorSettings(
-    characters: characters?.call() ?? this.characters,
-    useRepeatLetters: useRepeatLetters?.call() ?? this.useRepeatLetters,
-    useCapitalLetters: useCapitalLetters?.call() ?? this.useCapitalLetters,
-    useNumbers: useNumbers?.call() ?? this.useNumbers,
-    usePunctuation: usePunctuation?.call() ?? this.usePunctuation,
-    textMaxLength: textMaxLength?.call() ?? this.textMaxLength,
-  );
 }

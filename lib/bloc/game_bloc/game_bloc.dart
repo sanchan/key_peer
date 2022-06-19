@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
+import 'package:key_peer/bloc/cubits/game_settings_cubit.dart';
 import 'package:key_peer/bloc/cubits/scoreboard_cubit.dart';
 import 'package:key_peer/bloc/game_bloc/events/add_key_event.dart';
 import 'package:key_peer/bloc/game_bloc/events/game_bloc_event.dart';
+import 'package:key_peer/bloc/game_bloc/events/generate_text_event.dart';
 import 'package:key_peer/bloc/game_bloc/events/set_game_status_event.dart';
 import 'package:key_peer/bloc/game_bloc/events/set_text_event.dart';
 import 'package:key_peer/utils/enums.dart';
@@ -15,9 +17,10 @@ import 'package:key_peer/utils/types.dart';
 
 class GameBloc extends Bloc<GameBlocEvent, GameState> {
   GameBloc() : super(const GameState()) {
-    on<SetTextEvent>(_handleSetText);
-    on<SetGameStatusEvent>(_handleSetGameStatus);
     on<AddKeyEvent>(_handleAddKeyEvent);
+    on<SetGameStatusEvent>(_handleSetGameStatus);
+    on<SetTextEvent>(_handleSetText);
+    on<GenerateTextEvent>(_handleGenerateTextEvent);
   }
 
   String get currentText => state.currentText;
@@ -27,6 +30,11 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
 
   void _handleAddKeyEvent(AddKeyEvent event, Emitter<GameState> emit) {
     final keyEvent = event.keyEvent;
+
+    /// If game is completed and the user pressed the 'space' key, we want to generate a new text.
+    if(state.gameStatus == GameStatus.completed && keyEvent?.logicalKey == LogicalKeyboardKey.space) {
+      return Blocs.get<GameSettingsCubit>().generateText();
+    }
 
     /// If keyEvent is 'null' or 'RawKeyUpEvent' we only want to track the event, but we don't have anything else to do.
     if(keyEvent == null || keyEvent is RawKeyUpEvent) {
@@ -108,6 +116,12 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
       cursorPosition: () => 0,
     ));
   }
+
+  void _handleGenerateTextEvent(GenerateTextEvent _, Emitter<GameState> __) {
+    final state = Blocs.get<GameSettingsCubit>().state;
+
+    setText(state.textGenerator.generate(state.textGeneratorSettings));
+  }
 }
 
 extension GameBlocEmitters on GameBloc {
@@ -116,6 +130,8 @@ extension GameBlocEmitters on GameBloc {
   void setStatus(GameStatus status) => add(SetGameStatusEvent(status: status));
 
   void addKeyEvent(RawKeyEvent? keyEvent) => add(AddKeyEvent(keyEvent: keyEvent));
+
+  void generateTextEvent() => add(GenerateTextEvent());
 }
 
 @immutable

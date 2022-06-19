@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/bloc/cubits/game_settings_cubit.dart';
-import 'package:key_peer/models/text_generator.dart';
+import 'package:key_peer/models/text_generator_settings.dart';
 import 'package:key_peer/utils/colors.dart';
 import 'package:macos_ui/macos_ui.dart';
 
@@ -17,38 +18,9 @@ class SettingsDrawer extends StatefulWidget {
 }
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
-  final List _lessons = [];
-
   void _handleChangeCapitalLetters(bool value) {
     Blocs.get<GameSettingsCubit>().setUseCapitalLetters(value: value);
   }
-
-  // final List<LessonConfig> _lessons = [
-  //   const LessonConfig(
-  //     id: 1,
-  //     characters: ['e', 't', 'a', 'o'],
-  //   ),
-  //   const LessonConfig(
-  //     id: 2,
-  //     characters: ['n', 'i', 'h', 's', 'r'],
-  //   ),
-  //   const LessonConfig(
-  //     id: 3,
-  //     characters: ['d', 'l', 'u', 'm'],
-  //   ),
-  //   const LessonConfig(
-  //     id: 4,
-  //     characters: ['w', 'c', 'g', 'f'],
-  //   ),
-  //   const LessonConfig(
-  //     id: 5,
-  //     characters: ['y', 'p', 'b', 'v', 'k'],
-  //   ),
-  //   const LessonConfig(
-  //     id: 6,
-  //     characters: ["'", 'j', 'x', 'q', 'z'],
-  //   ),
-  // ];
 
   void _handleChangeCharacters(List<String> characters) {
     Blocs.get<GameSettingsCubit>().setTextGeneratorCharacters(characters);
@@ -95,24 +67,29 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const _SettingsBlockTitle(title: 'Lessons'),
-                _SettingsBlock(
-                  children: _lessons.asMap().entries.map((lesson) {
-                    return GestureDetector(
-                      onTap: () => _handleChangeCharacters(lesson.value),
-                      child: _SettingsBlockItem(
-                        isFirst: lesson.key == 0,
-                        isLast: lesson.key == _lessons.length - 1,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Lesson ${lesson.key + 1}: ${lesson.value.characters.join(' ')}'),
-                            // if(settings.currentLesson?.id == lesson.value.id)
-                            const MacosIcon(CupertinoIcons.check_mark, size: 16,),
-                          ],
-                        ),
-                      ),
+                BlocSelector<GameSettingsCubit, GameSettings, TextGeneratorSettings>(
+                  selector: (state) => state.textGeneratorSettings,
+                  builder: (context, settings) {
+                    return _SettingsBlock(
+                      children: settings.lessonCharacters.asMap().entries.map((lesson) {
+                        return GestureDetector(
+                          onTap: () => _handleChangeCharacters(lesson.value),
+                          child: _SettingsBlockItem(
+                            isFirst: lesson.key == 0,
+                            isLast: lesson.key == settings.lessonCharacters.length - 1,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Lesson ${lesson.key + 1}: ${lesson.value.join(' ')}'),
+                                if(listEquals(lesson.value, settings.characters))
+                                const MacosIcon(CupertinoIcons.check_mark, size: 16,),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     );
-                  }).toList(),
+                  },
                 ),
 
                 const _SettingsBlockTitle(title: 'Text modifiers'),

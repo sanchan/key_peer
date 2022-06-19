@@ -54,7 +54,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
       duration: const Duration(milliseconds: 250),
     );
 
-    Blocs.get<GameBloc>().setText('key peer');
+    Blocs.get<GameBloc>().setText('hi my friend, welcome to key peer');
   }
 
   @override

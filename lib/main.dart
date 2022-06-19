@@ -20,7 +20,6 @@ Future<void> main() async {
   // Use it only after calling `hiddenWindowAtLaunch`
   await windowManager.waitUntilReadyToShow();
 
-  // Hide window title bar
   await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
   await windowManager.setSize(const Size(1100,630));
   await windowManager.setMinimumSize(const Size(1100,630));

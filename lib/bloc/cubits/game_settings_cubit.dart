@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
-import 'package:key_peer/models/text_generator.dart';
+import 'package:key_peer/models/text_generator_settings.dart';
+import 'package:key_peer/utils/text_generator.dart';
 import 'package:key_peer/utils/types.dart';
 
 class GameSettingsCubit extends Cubit<GameSettings> {
@@ -14,8 +15,10 @@ class GameSettingsCubit extends Cubit<GameSettings> {
   void onChange(Change<GameSettings> change) {
     super.onChange(change);
 
-    Blocs.get<GameBloc>().setText(state.textGenerator.generate(state.textGeneratorSettings));
+    Blocs.get<GameBloc>().generateTextEvent();
   }
+
+  void generateText() => emit(state.copyWith());
 
   void setTextGeneratorCharacters(List<String> characters) => emit(state.copyWith(
     textGeneratorSettings: () => state.textGeneratorSettings.copyWith(

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 import 'package:key_peer/models/keyboard_key_info.dart';
+import 'package:key_peer/utils/enums.dart';
 
 class KeyRenderer extends StatefulWidget {
   const KeyRenderer({
@@ -84,7 +85,7 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
     }
   }
 
-  double get fontSize {
+  double get _fontSize {
     if (_keyLabel.length == 1) {
       return 16.0;
     }
@@ -94,6 +95,8 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
 
   void _handleEventChange(BuildContext _, GameState state) {
     final event = state.keyEvent;
+
+    print('_handleEventChange');
 
     switch (event.runtimeType) {
       case RawKeyDownEvent:
@@ -106,6 +109,13 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
         _animationController.reverse().ignore();
         break;
       default:
+    }
+
+    if(_keyLabel == ' ' && state.gameStatus == GameStatus.completed) {
+      _animationController.repeat(
+        reverse: true,
+        period: const Duration(milliseconds: 1000),
+      ).ignore();
     }
   }
 
@@ -137,7 +147,7 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
               alignment: _keyTextAlignment,
               child: Text(
                 _text,
-                style: TextStyle(fontSize: fontSize, color: Colors.white),
+                style: TextStyle(fontSize: _fontSize, color: Colors.white),
               ),
             ),
           );
