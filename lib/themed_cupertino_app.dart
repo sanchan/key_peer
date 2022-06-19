@@ -29,9 +29,9 @@ class ThemedCupertinoApp extends StatelessWidget {
       home: MultiBlocProvider(
         providers: [
           BlocProvider(create: (_) => Blocs.get<KeyboardSettingsCubit>()),
+          BlocProvider(create: (_) => Blocs.get<ScoreboardCubit>()),
           BlocProvider(create: (_) => Blocs.get<GameSettingsCubit>()),
           BlocProvider(create: (_) => Blocs.get<GameBloc>()),
-          BlocProvider(create: (_) => Blocs.get<ScoreboardCubit>()),
         ],
         child: const Home(),
       ),

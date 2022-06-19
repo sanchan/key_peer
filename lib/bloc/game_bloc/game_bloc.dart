@@ -26,7 +26,7 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
   String get currentText => state.currentText;
   int get cursorPosition => state.cursorPosition;
   bool get isLessonCompleted => state.gameStatus == GameStatus.completed;
-  List<TypedKeyStatus> get statuses => state.statuses;
+  List<GameKeyStatus> get statuses => state.statuses;
 
   void _handleAddKeyEvent(AddKeyEvent event, Emitter<GameState> emit) {
     final keyEvent = event.keyEvent;
@@ -73,24 +73,25 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
     /// Update characters status based on the keyEvent we recieved.
     final statuses = List.of(state.statuses);
     if(keyEvent.character == currentText[cursorPosition]) {
-      if(
-        statuses[cursorPosition] == TypedKeyStatus.none ||
-        statuses[cursorPosition] == TypedKeyStatus.correct
-      ) {
-        statuses[cursorPosition] = TypedKeyStatus.correct;
-      } else {
-        statuses[cursorPosition] = TypedKeyStatus.corrected;
+      switch (statuses[cursorPosition]) {
+        case GameKeyStatus.none:
+        case GameKeyStatus.correct:
+          statuses[cursorPosition] = GameKeyStatus.correct;
+          break;
+        case GameKeyStatus.error:
+        case GameKeyStatus.ammended:
+          statuses[cursorPosition] = GameKeyStatus.ammended;
       }
     } else {
-      statuses[cursorPosition] = TypedKeyStatus.error;
+      statuses[cursorPosition] = GameKeyStatus.error;
 
       Blocs.get<ScoreboardCubit>().incrementErrors();
     }
 
     /// Update game status if we need it
-    final gameStatus = statuses.every((status) => status == TypedKeyStatus.none)
+    final gameStatus = statuses.every((status) => status == GameKeyStatus.none)
       ? GameStatus.none
-      : statuses.every((status) => [TypedKeyStatus.correct, TypedKeyStatus.corrected].contains(status))
+      : statuses.every((status) => [GameKeyStatus.correct, GameKeyStatus.ammended].contains(status))
         ? GameStatus.completed
         : GameStatus.started;
 
@@ -111,7 +112,7 @@ class GameBloc extends Bloc<GameBlocEvent, GameState> {
 
     emit(state.copyWith(
       currentText: () => event.text,
-      statuses: () => event.text.split('').map((char) => TypedKeyStatus.none).toList(),
+      statuses: () => event.text.split('').map((char) => GameKeyStatus.none).toList(),
       gameStatus: () => GameStatus.none,
       cursorPosition: () => 0,
     ));
@@ -148,12 +149,12 @@ class GameState {
   final int cursorPosition;
   final GameStatus gameStatus;
   final RawKeyEvent? keyEvent;
-  final List<TypedKeyStatus> statuses;
+  final List<GameKeyStatus> statuses;
 
   GameState copyWith({
     Copyable<String>? currentText,
     Copyable<int>? cursorPosition,
-    Copyable<List<TypedKeyStatus>>? statuses,
+    Copyable<List<GameKeyStatus>>? statuses,
     Copyable<GameStatus>? gameStatus,
     Copyable<RawKeyEvent>? keyEvent,
   }) => GameState(

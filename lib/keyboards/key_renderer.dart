@@ -96,8 +96,6 @@ class _KeyRendererState extends State<KeyRenderer> with SingleTickerProviderStat
   void _handleEventChange(BuildContext _, GameState state) {
     final event = state.keyEvent;
 
-    print('_handleEventChange');
-
     switch (event.runtimeType) {
       case RawKeyDownEvent:
         if (event?.logicalKey == _logicalKey) {

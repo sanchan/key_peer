@@ -4,34 +4,34 @@ import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
 import 'package:key_peer/utils/enums.dart';
 
-class TypedText extends StatefulWidget {
-  const TypedText({
+class TypingText extends StatefulWidget {
+  const TypingText({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<TypedText> createState() => _TypedTextState();
+  State<TypingText> createState() => _TypingTextState();
 }
 
-class _TypedTextState extends State<TypedText> {
+class _TypingTextState extends State<TypingText> {
   int get _cursorIndex => Blocs.get<GameBloc>().state.cursorPosition;
   bool get _isLessonCompleted => Blocs.get<GameBloc>().state.gameStatus == GameStatus.completed;
-  List<TypedKeyStatus> get _statuses => Blocs.get<GameBloc>().statuses;
+  List<GameKeyStatus> get _statuses => Blocs.get<GameBloc>().statuses;
   String get _targetText => Blocs.get<GameBloc>().currentText;
 
   Color _textColor(int index) {
     switch (_statuses[index]) {
-      case TypedKeyStatus.none:
+      case GameKeyStatus.none:
         return _cursorIndex == index
           ? Colors.black
           : Colors.grey;
-      case TypedKeyStatus.correct:
+      case GameKeyStatus.correct:
         return _cursorIndex == index && !_isLessonCompleted
           ? Colors.black
           : Colors.white;
-      case TypedKeyStatus.error:
+      case GameKeyStatus.error:
         return Colors.red;
-      case TypedKeyStatus.corrected:
+      case GameKeyStatus.ammended:
         return Colors.blue;
     }
   }
@@ -46,7 +46,7 @@ class _TypedTextState extends State<TypedText> {
           final char = _targetText[i];
           richCharacters.add(
             TextSpan(
-              text: char == ' ' && (_statuses[i] == TypedKeyStatus.error || _statuses[i] == TypedKeyStatus.corrected)
+              text: char == ' ' && [GameKeyStatus.error, GameKeyStatus.ammended].contains(_statuses[i])
                 ? '•'
                 : char,
               style: TextStyle(

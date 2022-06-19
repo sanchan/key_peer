@@ -1,10 +1,10 @@
 // ignore_for_file: prefer-match-file-name
 
-enum TypedKeyStatus {
+enum GameKeyStatus {
   none,
   correct,
   error,
-  corrected,
+  ammended,
 }
 
 enum GameStatus {

@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/cubits/keyboard_settings_cubit.dart';
 import 'package:key_peer/keyboards/key_renderer.dart';
 
-class KeyboardEn extends StatelessWidget {
-  const KeyboardEn({
+class KeyboardRenderer extends StatelessWidget {
+  const KeyboardRenderer({
     Key? key,
   }) : super(key: key);
 

@@ -11,11 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:key_peer/bloc/blocs.dart';
 import 'package:key_peer/bloc/game_bloc/game_bloc.dart';
-import 'package:key_peer/keyboards/keyboard_en.dart';
+import 'package:key_peer/keyboards/keyboard_renderer.dart';
 import 'package:key_peer/utils/enums.dart';
-import 'package:key_peer/widgets/scoreboard.dart';
-import 'package:key_peer/widgets/settings_drawer.dart';
-import 'package:key_peer/widgets/typed_text.dart';
+import 'package:key_peer/widgets/scoreboard/scoreboard.dart';
+import 'package:key_peer/widgets/settings_drawer/settings_drawer.dart';
+import 'package:key_peer/widgets/typing_text/typing_text.dart';
 import 'package:window_manager/window_manager.dart';
 
 class Home extends StatefulWidget {
@@ -134,9 +134,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, Window
                         SizedBox(height: 60.0),
                         Scoreboard(),
                         Spacer(),
-                        TypedText(),
+                        TypingText(),
                         Spacer(),
-                        KeyboardEn(),
+                        KeyboardRenderer(),
                         SizedBox(height: 60.0),
                       ],
                     ),

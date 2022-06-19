@@ -15,8 +15,8 @@ class Blocs {
   static void setup() {
     _getIt
       ..registerSingleton(KeyboardSettingsCubit())
+      ..registerSingleton(ScoreboardCubit())
       ..registerSingleton(GameSettingsCubit())
-      ..registerSingleton(GameBloc())
-      ..registerSingleton(ScoreboardCubit());
+      ..registerSingleton(GameBloc());
   }
 }
