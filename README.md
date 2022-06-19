@@ -1,16 +1,5 @@
-# key_peer
+# Key Peer
 
-A new Flutter project.
+Key Peer is your favourite app to train your typing skills, it's free and Open Source so... what are you waiting for? ;)
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The app is in alpha state and a lot of functionality and features are coming soon!
