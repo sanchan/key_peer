@@ -35,7 +35,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
   }
 
   void _handleChangeTextLength(int? length) {
-    if(length == null) {
+    if (length == null) {
       return;
     }
 
@@ -67,31 +67,28 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const _SettingsBlockTitle(title: 'Lessons'),
-                BlocSelector<GameSettingsCubit, GameSettings, TextGeneratorSettings>(
-                  selector: (state) => state.textGeneratorSettings,
-                  builder: (context, settings) {
-                    return _SettingsBlock(
-                      children: settings.lessonCharacters.asMap().entries.map((lesson) {
-                        return GestureDetector(
-                          onTap: () => _handleChangeCharacters(lesson.value),
-                          child: _SettingsBlockItem(
-                            isFirst: lesson.key == 0,
-                            isLast: lesson.key == settings.lessonCharacters.length - 1,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Lesson ${lesson.key + 1}: ${lesson.value.join(' ')}'),
-                                if(listEquals(lesson.value, settings.characters))
-                                const MacosIcon(CupertinoIcons.check_mark, size: 16,),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                _SettingsBlock(
+                  children: settings.lessonCharacters.asMap().entries.map((lesson) {
+                    return GestureDetector(
+                      onTap: () => _handleChangeCharacters(lesson.value),
+                      child: _SettingsBlockItem(
+                        isFirst: lesson.key == 0,
+                        isLast: lesson.key == settings.lessonCharacters.length - 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Lesson ${lesson.key + 1}: ${lesson.value.join(' ')}'),
+                            if (listEquals(lesson.value, settings.characters))
+                              const MacosIcon(
+                                CupertinoIcons.check_mark,
+                                size: 16,
+                              ),
+                          ],
+                        ),
+                      ),
                     );
-                  },
+                  }).toList(),
                 ),
-
                 const _SettingsBlockTitle(title: 'Text modifiers'),
                 _SettingsBlock(
                   children: [
@@ -141,13 +138,12 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                           MacosPopupButton<int>(
                             value: settings.textMaxLength,
                             onChanged: _handleChangeTextLength,
-                            items: <int>[70, 40, 25]
-                              .map<MacosPopupMenuItem<int>>((int value) {
-                                return MacosPopupMenuItem<int>(
-                                  value: value,
-                                  child: Text('$value'),
-                                );
-                              }).toList(),
+                            items: <int>[70, 40, 25].map<MacosPopupMenuItem<int>>((int value) {
+                              return MacosPopupMenuItem<int>(
+                                value: value,
+                                child: Text('$value'),
+                              );
+                            }).toList(),
                           ),
                         ],
                       ),
@@ -236,11 +232,11 @@ class _SettingsBlockItem extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           top: isFirst
-            ? BorderSide.none
-            : BorderSide(width: 0.5, color: darken(MacosColors.alternatingContentBackgroundColor, 0.05)),
+              ? BorderSide.none
+              : BorderSide(width: 0.5, color: darken(MacosColors.alternatingContentBackgroundColor, 0.05)),
           bottom: isLast
-            ? BorderSide.none
-            : BorderSide(width: 0.5, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
+              ? BorderSide.none
+              : BorderSide(width: 0.5, color: lighten(MacosColors.alternatingContentBackgroundColor, 0.05)),
         ),
       ),
       child: child,
